@@ -1,0 +1,79 @@
+<!-- TODO: Take the template variables from settings instead of writing again. -->
+{% with SITE_TITLE="Married research scholars portal" %}
+{% with DESCRIPTION="Apply for apartments for married scholars" %}
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> {% block title %} {{ SITE_TITLE }} {% endblock title %}</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Nautatava Navlakha" />
+  <meta name="description" content="Apply for apartments for married scholars" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  {% block head_favicon %}
+  <link rel="icon" type="image/png" href="{% static 'favicon.ico' %}">
+  {% endblock head_favicon %}
+
+  {% block cssLinks %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}" />
+  {% endblock %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}" />
+  <style>
+    body {
+      color: #5e5e5e;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    #my-nav h1 {
+      display: flex;
+      padding: 0;
+      margin: 0;
+      font-weight: 300;
+    }
+
+    #my-nav a {
+      padding: 15px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Fixed navbar -->
+  <nav id="my-nav">
+    <h1> <a> {{ SITE_TITLE }} </a> </h1>
+  </nav>
+
+  {% block main %}
+  <main class="shade" role="main">
+    <div id="intro">
+      <h1> {{ SITE_TITLE }} </h1>
+      <p>
+        {{ DESCRIPTION }}
+      </p>
+      <div class="linkToPortal">
+        <a href="/new/" class="btn">Click here to apply</a>
+      </div>
+    </div>
+  </main>
+  {% endblock %}
+
+  {% include 'footer.html' %}
+
+  {% block jsLinks %}
+  {% endblock %}
+</body>
+
+</html>
+
+{% endwith %}{% endwith %}

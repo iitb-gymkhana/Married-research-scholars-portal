@@ -1,0 +1,44 @@
+div {
+  margin-bottom: 15px;
+}
+
+#intro{
+  color: #ffffff; 
+  text-align: center; 
+  padding: 100px 0;
+}
+
+#intro h1{
+  font-size: 45px;
+}
+
+#intro p{
+  margin-bottom: 40px; 
+  font-size: 18px;
+}
+
+.shade{
+  background-image: linear-gradient(to bottom,#5084BC 0,#6f5499 100%); 
+}
+
+.linkToPortal{
+  padding: 32px
+}
+.btn {
+  border-color: #2196F3;
+  color: dodgerblue;
+
+  border: 1px solid white;
+  background-color: none;
+  color: white;
+  padding: 16px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: white;
+  color: #563d7c;
+}
