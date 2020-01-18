@@ -3,7 +3,7 @@
 {% block main %}
 <div class="container">
   <h2>Homepage</h2>
-  <p>Hello {{ user.first_name }}
+  <p>Hello {{user.first_name}}
     <!-- from {{ user.userprofile.hostel_name }} -->
     ! </p>
   <a href="{% url 'portal:apply' %}"><button> Apply for a building </button></a>

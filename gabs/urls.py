@@ -31,5 +31,9 @@ urlpatterns = [
         RedirectView.as_view(url="/oauth/login/", permanent=False),
         name="login",
     ),
-    path("logout/", RedirectView.as_view(url="/oauth/logout/", permanent=False)),
+    path(
+        "logout/",
+        RedirectView.as_view(url="/oauth/logout/", permanent=False),
+        name="logout",
+    ),
 ]

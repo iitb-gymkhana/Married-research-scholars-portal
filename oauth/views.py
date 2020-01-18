@@ -99,4 +99,4 @@ def checkEmpty(params):
 
 def client_logout(req):
     logout(req)
-    return render(req, "portal/logged_out.html")
+    return render(req, "portal/logout.html")

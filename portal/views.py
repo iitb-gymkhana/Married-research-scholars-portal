@@ -5,8 +5,6 @@ from django.urls import reverse
 from .forms import QueuerForm
 from .models import Queuer
 
-# Create your views here.
-
 
 @login_required
 def portal(request):
@@ -26,10 +24,7 @@ def apply(request):
 
         if form.is_valid():
             form.save()
-            return redirect(
-                reverse("portal:thanks")
-                + "?waitlist=%s" % Queuer.objects.last().waitlist_number
-            )
+            return redirect(reverse("portal:thanks"))
     else:
         form = QueuerForm(
             initial={
@@ -47,6 +42,8 @@ def waitlist(request):
     waiting = {}
     for queue in queues:
         waiting[queue.building_applied.name] = queue.current_waitlist
+
+    print(waiting)
     return render(request, "portal/waitlist.html", {"waitlist": waiting})
 
 
@@ -55,4 +52,4 @@ def logout(request):
     """Log out."""
 
     logout(request)
-    return render(request, "portal/login.html", {"message": "logged out"})
+    return render(request, "portal/logout.html",)
