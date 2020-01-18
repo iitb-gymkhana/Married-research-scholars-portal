@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+
+{% block main %}
+<div class="container">
+  Current waitlist number for your applications:
+  <br>
+  {% for building, value in waitlist.items %}
+  <strong>{{ building }}</strong> is {{ value }} {{ request.GET.waitlist }}
+  <br>
+  {% endfor %}
+</div>
+{% endblock %}

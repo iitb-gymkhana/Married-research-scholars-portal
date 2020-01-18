@@ -44,6 +44,32 @@
       padding: 15px;
       font-size: 18px;
     }
+
+    /* Container */
+    .container {
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: 30px;
+      margin-left: 30px;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        width: 750px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .container {
+        width: 970px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .container {
+        width: 1170px;
+      }
+    }
   </style>
 </head>
 
@@ -62,7 +88,7 @@
         {{ DESCRIPTION }}
       </p>
       <div class="linkToPortal">
-        <a href="{% url 'portal:home' %}" class="btn">Click here to apply</a>
+        <a href="{% url 'portal:home' %}" class="btn">Click here to go to the portal</a>
       </div>
     </div>
   </main>

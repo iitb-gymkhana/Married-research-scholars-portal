@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                         default="", max_length=128, region=None
                     ),
                 ),
-                ("email", models.EmailField(default="abc@example.com", max_length=254)),
+                ("email", models.EmailField(max_length=254)),
                 ("waitlist_number", models.IntegerField(db_index=True, default=0)),
                 (
                     "building_applied",

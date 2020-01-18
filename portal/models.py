@@ -28,8 +28,9 @@ class Queuer(models.Model):
     building_applied = models.ForeignKey("Building", on_delete=models.PROTECT)
     placed = models.BooleanField(null=False, default=False)
     name = models.CharField(max_length=126,)
+    roll_number = models.CharField(max_length=10)
     contact_number = PhoneNumberField(default="",)
-    email = models.EmailField(max_length=254, default="abc@example.com")
+    email = models.EmailField(max_length=254)
     waitlist_number = models.IntegerField(default=0, db_index=True)
 
     # At any point of time:

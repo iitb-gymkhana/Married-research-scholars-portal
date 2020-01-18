@@ -6,6 +6,12 @@ from .models import Queuer
 class QueuerForm(forms.ModelForm):
     """Form definition for Queuer."""
 
+    def __init__(self, *args, **kwargs):
+        super(QueuerForm, self).__init__(*args, **kwargs)
+        # self.fields['roll_number'].disabled = True
+        # self.fields['name'].disabled = True
+        # self.fields['email'].disabled = True
+
     class Meta:
         model = Queuer
         fields = "__all__"
