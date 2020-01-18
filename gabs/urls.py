@@ -16,11 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 
-import waitlist.urls
+import oauth.urls
+import portal.urls
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html"), name="index"),
-    path("new/", include((waitlist.urls, "waitlist"), namespace="waitlist")),
+    path("oauth/", include((oauth.urls, "oauth"), namespace="oauth")),
+    path("portal/", include((portal.urls, "portal"), namespace="portal")),
     path("admin/", admin.site.urls),
+    path(
+        "login/",
+        RedirectView.as_view(url="/oauth/login/", permanent=False),
+        name="login",
+    ),
+    path("logout/", RedirectView.as_view(url="/oauth/logout/", permanent=False)),
 ]

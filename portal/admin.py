@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 
 from .forms import QueuerAdminForm
 from .models import Building, Queuer
@@ -33,7 +33,7 @@ class CustomQueuerAdmin(admin.ModelAdmin):
 
 
 # No one can change users or groups.
-admin.site.unregister(User)
+# admin.site.unregister(User)
 admin.site.unregister(Group)
 
 # Register your models here.

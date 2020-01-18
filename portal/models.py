@@ -19,12 +19,6 @@ class Building(models.Model):
         return self.name
 
 
-# def get_new_default():
-#     new_order_default = FooterLinks.objects.all().aggregate(Max('order'))[
-#         'order__max']+1
-#     return new_order_default
-
-
 class Queuer(models.Model):
     """People who are currently in queue."""
 
