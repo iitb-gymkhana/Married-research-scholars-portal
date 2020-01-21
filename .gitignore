@@ -172,3 +172,5 @@ uwsgi.ini
 settings_config.py
 
 .vscode/
+gunicorn_conf.py
+prod.sh
