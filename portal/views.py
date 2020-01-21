@@ -19,7 +19,7 @@ def apply(request):
         # POST['roll_number'] = request.user.username
         # POST['name'] = request.user.first_name + request.user.last_name
         # POST['email'] = request.user.email
-        form = QueuerForm(POST)
+        form = QueuerForm(POST, request.FILES)
         # TODO: can't sent in POST requests when fields are disabled,.
 
         if form.is_valid():
@@ -36,6 +36,7 @@ def apply(request):
     return render(request, "portal/apply.html", {"form": form})
 
 
+@login_required
 def waitlist(request):
     user_roll_number = request.user.username
     queues = Queuer.objects.filter(roll_number=user_roll_number)

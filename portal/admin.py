@@ -15,6 +15,7 @@ class CustomQueuerAdmin(admin.ModelAdmin):
         "placed",
         "contact_number",
         "email",
+        "proof_document",
     )
     list_filter = ("building_applied", "placed")
     search_fields = ("name", "contact_number")

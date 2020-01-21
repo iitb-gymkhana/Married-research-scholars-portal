@@ -19,6 +19,11 @@ class Building(models.Model):
         return self.name
 
 
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return "doc_{0}".format(instance.user.username)
+
+
 class Queuer(models.Model):
     """People who are currently in queue."""
 
@@ -28,11 +33,12 @@ class Queuer(models.Model):
     building_applied = models.ForeignKey("Building", on_delete=models.PROTECT)
     placed = models.BooleanField(null=False, default=False)
     name = models.CharField(max_length=126,)
+    email = models.EmailField(max_length=254)
     roll_number = models.CharField(max_length=10)
     contact_number = PhoneNumberField(default="",)
-    email = models.EmailField(max_length=254)
+    wife_name = models.CharField(max_length=126,)
     waitlist_number = models.IntegerField(default=0, db_index=True)
-
+    proof_document = models.FileField(upload_to="user_directory_path",)
     # At any point of time:
     #   people living in building = count(placed=True, building_applied)
     #   waitlist_number = count(Queuer) - count(placed=True)
@@ -41,7 +47,7 @@ class Queuer(models.Model):
         verbose_name = "queuer"
         verbose_name_plural = "queuers"
         unique_together = ("building_applied", "waitlist_number")
-        unique_together = ("name", "contact_number", "building_applied")
+        unique_together = ("name", "roll_number", "building_applied")
 
     def __str__(self):
         return self.name

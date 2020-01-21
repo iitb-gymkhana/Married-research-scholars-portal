@@ -7,7 +7,7 @@
 
 {% block main %}
 <div class="application container">
-  <form method="post" novalidate>
+  <form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     {% include 'form.html' with form=form %}
     <button type="submit" class="btn btn-primary">Submit</button>

@@ -1,8 +1,25 @@
+import os
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "SECRET"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+STATIC_URL = "/static/"
+MEDIA_URL = "/upload/"
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# DATABASES
+# Define databases here to override default Databases.
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
+}
+
 
 ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
 
@@ -27,7 +44,12 @@ ADMINS = (("Nautatva Navlakha", "nnautatva@gmail.com"),)
 
 # DATABASES
 # Define databases here to override default Databases.
-
+DATABASES = {
+    "development": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
+}
 
 # OAuth2 settings
 AUTHORIZATION_URL = "https://gymkhana.iitb.ac.in/sso/oauth/authorize/"
