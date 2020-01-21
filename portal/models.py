@@ -19,11 +19,6 @@ class Building(models.Model):
         return self.name
 
 
-def user_directory_path(instance, filename):
-    # file will be uploaded with name doc_rollNumber
-    return "doc_{0}".format(instance.user.username)
-
-
 class Queuer(models.Model):
     """People who are currently in queue."""
 
@@ -38,7 +33,7 @@ class Queuer(models.Model):
     contact_number = PhoneNumberField(default="",)
     wife_name = models.CharField(max_length=126,)
     waitlist_number = models.IntegerField(default=0, db_index=True)
-    proof_document = models.FileField(upload_to=user_directory_path,)
+    proof_document = models.FileField(upload_to="marriage_certi/",)
     # At any point of time:
     #   people living in building = count(placed=True, building_applied)
     #   waitlist_number = count(Queuer) - count(placed=True)
