@@ -114,6 +114,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+STATIC_ROOT = "abcd"
+
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
@@ -124,8 +126,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "generatedstaticfiles")
 
 X_FRAME_OPTIONS = "DENY"
 
-LOGIN_URL = "login"
-LOGOUT_URL = "logout"
+LOGIN_URL = "oauth:login"
+LOGOUT_URL = "oauth:logout"
 LOGIN_REDIRECT_URL = "home"
 
 AUTH_PROFILE_MODULE = "core.UserProfile"

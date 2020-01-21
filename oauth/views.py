@@ -15,10 +15,11 @@ User = get_user_model()
 def client_login(req):
 
     authorize = settings.AUTHORIZATION_URL
+    redirect_uri = settings.REDIRECT_URI
     client_id = settings.CLIENT_ID
     scope = settings.SCOPE
-    url = "{}?client_id={}&response_type=code&scope={}".format(
-        authorize, client_id, scope
+    url = "{}?client_id={}&response_type=code&scope={}&redirect_uri={}".format(
+        authorize, client_id, scope, redirect_uri
     )
     print(url)
 
