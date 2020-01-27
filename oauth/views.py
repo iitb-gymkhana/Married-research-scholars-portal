@@ -60,12 +60,17 @@ def authenticated(req):
     roll_number = profile_json["roll_number"]
     first_name = profile_json["first_name"]
     last_name = profile_json["last_name"]
-    room = profile_json["insti_address"]["room"]
-    hostel = profile_json["insti_address"]["hostel"]
-    hostel_name = profile_json["insti_address"]["hostel_name"]
+    room = ""
+    hostel = ""
+    hostel_name = ""
+
+    if profile_json["insti_address"] is not None:
+        room = profile_json["insti_address"]["room"]
+        hostel = profile_json["insti_address"]["hostel"]
+        hostel_name = profile_json["insti_address"]["hostel_name"]
     # TODO: refresh_token = response_json['refresh_token']
 
-    params = [roll_number, first_name, last_name, room, hostel, hostel_name]
+    params = [roll_number, first_name, last_name]
     checkEmpty(params)
 
     try:
