@@ -34,7 +34,7 @@ EMAIL_HOST_PASSWORD = ""
 # Email Id which will appear in From header in email
 EMAIL_FROM = ""
 
-EMAIL_BACKEND = "core.notification.IITBEmailBackend"
+# EMAIL_BACKEND = "core.notification.IITBEmailBackend"
 
 SERVER_EMAIL = ""
 
