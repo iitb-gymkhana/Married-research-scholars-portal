@@ -175,4 +175,4 @@ settings_config.py
 gunicorn_conf.py
 prod.sh
 
-uploads/
+upload/

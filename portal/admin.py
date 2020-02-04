@@ -1,13 +1,21 @@
 from django.contrib import admin
-from django.contrib.auth.models import Group
+from import_export import resources
+from import_export.admin import ExportMixin
+from import_export.formats import base_formats
 
 from .forms import QueuerAdminForm
 from .models import Building, Queuer
 
 
-class CustomQueuerAdmin(admin.ModelAdmin):
+class QueuerResource(resources.ModelResource):
+    class Meta:
+        model = Queuer
+
+
+class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
     """Admin View for Queuer"""
 
+    resource_class = QueuerResource
     list_display = (
         "name",
         "building_applied",
@@ -15,11 +23,21 @@ class CustomQueuerAdmin(admin.ModelAdmin):
         "placed",
         "contact_number",
         "email",
-        "proof_document",
+        "marriage_certificate",
     )
     list_filter = ("building_applied", "placed")
     search_fields = ("name", "contact_number")
     form = QueuerAdminForm
+
+    def get_export_formats(self):
+        formats = (
+            base_formats.XLS,
+            base_formats.XLSX,
+            base_formats.CSV,
+            base_formats.HTML,
+        )
+
+        return [f for f in formats if f().can_export()]
 
     def Mark_as_placed(modeladmin, news, queryset):
         queryset.update(placed=True)
@@ -35,7 +53,7 @@ class CustomQueuerAdmin(admin.ModelAdmin):
 
 # No one can change users or groups.
 # admin.site.unregister(User)
-admin.site.unregister(Group)
+# admin.site.unregister(Group)
 
 # Register your models here.
 admin.site.register(Building)

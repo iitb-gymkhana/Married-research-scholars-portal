@@ -18,6 +18,10 @@ class QueuerForm(forms.ModelForm):
         exclude = (
             "placed",
             "waitlist_number",
+            "marriage_certificate_verified",
+            "aadhaar_card_verified",
+            "spouse_aadhaar_card_verified",
+            "institute_ID_verified",
         )
 
 

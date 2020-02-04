@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "portal",
     "phonenumber_field",
     "widget_tweaks",
+    "import_export",
 ]
 
 MIDDLEWARE = [

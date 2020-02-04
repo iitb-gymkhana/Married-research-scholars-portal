@@ -2,11 +2,26 @@
 
 {% block main %}
 <div class="container">
+  if documents not verified, please visit HCU office for document verification within 7 days, else your application will
+  be deleted.<br><br>
+  Documents to bring:
+  <ul style="margin: 0;">
+    <li> marriage certificate </li>
+    <li> Your Aadhaar card and a photocopy </li>
+    <li> Aadhaar card of spouse + photocopy </li>
+    <li> Institute ID card </li>
+  </ul>
+  <br><br>
   Current waitlist number for your applications:
   <br>
   {% for building, value in waitlist.items %}
   <strong>{{ building }}</strong> is {{ value }}
   <br>
   {% endfor %}
+  <br>
+  *If waitlist number is N/A, this is because atleast one of your documents is not verified.
+
+  <br><br>
+  Building is allotted based considering first come first serve.
 </div>
 {% endblock %}
