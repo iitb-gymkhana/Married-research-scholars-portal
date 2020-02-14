@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -21,21 +22,27 @@ class Building(models.Model):
 class Queuer(models.Model):
     """People who are currently in queue."""
 
-    date_applied = models.DateField(auto_now_add=True,)
+    date_applied = models.DateTimeField(
+        null=False, default=timezone.now, editable=False
+    )
 
     building_applied = models.ForeignKey("Building", on_delete=models.PROTECT)
     placed = models.BooleanField(null=False, default=False)
+    room_number_if_placed = models.CharField(max_length=6, null=True, blank=True)
+
     name = models.CharField(max_length=126,)
     email = models.EmailField(max_length=254)
     roll_number = models.CharField(max_length=10)
     contact_number = PhoneNumberField(default="",)
     spouse_name = models.CharField(max_length=126,)
-    waitlist_number = models.IntegerField(default=0, db_index=True)
+    waitlist_number = models.IntegerField(default=0, db_index=True, editable=False)
 
     marriage_certificate_verified = models.BooleanField(null=False, default=False)
     aadhaar_card_verified = models.BooleanField(null=False, default=False)
     spouse_aadhaar_card_verified = models.BooleanField(null=False, default=False)
     institute_ID_verified = models.BooleanField(null=False, default=False)
+
+    verified_time = models.DateTimeField(null=True, blank=True)
 
     marriage_certificate = models.FileField(upload_to="marriage_certi/",)
     your_aadhaar_card = models.FileField(upload_to="your_aadhaar_card/",)
@@ -54,34 +61,69 @@ class Queuer(models.Model):
     def __str__(self):
         return self.name
 
-    def current_waitlist(self):
-        if not (
+    def all_verified(self):
+        # returns if everything is verified or not
+        return bool(
             self.marriage_certificate_verified
             and self.aadhaar_card_verified
             and self.spouse_aadhaar_card_verified
             and self.institute_ID_verified
-        ):
+        )
+
+    all_verified.boolean = True  # For bool on admin page
+
+    def current_waitlist(self):
+        if not self.all_verified():
             return "N/A"
         if self.placed is True:
             return 0
-        return Queuer.objects.filter(
+
+        initDateTime = Queuer.objects.earliest("date_applied").date_applied
+        sort_verified_time = Queuer.objects.filter(
             building_applied=self.building_applied,
             placed=False,
-            waitlist_number__range=(0, self.waitlist_number),
+            verified_time__range=[initDateTime, self.verified_time],
             marriage_certificate_verified=True,
             aadhaar_card_verified=True,
             spouse_aadhaar_card_verified=True,
             institute_ID_verified=True,
         ).count()
 
+        if sort_verified_time == 0:
+            # In case algorithm fails.
+            return "Check Manually"
+
+        else:
+            return sort_verified_time
+
     def save(self):
-        queuer = Queuer.objects.filter(id=self.id)
-        if not queuer:
+        # Handle initial cases of converting date into date time
+        if not self.date_applied:
+            self.date_applied = timezone.now()
+            if self.all_verified():
+                self.verified_time = timezone.now()
+
+        if not self.id:
             self.waitlist_number = (
                 Queuer.objects.filter(
                     building_applied=self.building_applied, placed=False
                 ).count()
                 + 1
             )
+            self.date_applied = timezone.now()
+
+        if not self.verified_time:
+            if self.all_verified():
+                self.verified_time = timezone.now()
+
+        if not self.all_verified():
+            """ If an option is unchecked later, again remove the verified time """
+            self.verified_time = None
+
+        if self.room_number:
+            # if entered room number, candidate is placed.
+            self.placed = True
+        else:
+            self.placed = False
 
         super(Queuer, self).save()

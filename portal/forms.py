@@ -14,14 +14,16 @@ class QueuerForm(forms.ModelForm):
 
     class Meta:
         model = Queuer
-        fields = "__all__"
-        exclude = (
-            "placed",
-            "waitlist_number",
-            "marriage_certificate_verified",
-            "aadhaar_card_verified",
-            "spouse_aadhaar_card_verified",
-            "institute_ID_verified",
+        fields = (
+            "building_applied",
+            "name",
+            "email",
+            "roll_number",
+            "contact_number",
+            "spouse_name",
+            "marriage_certificate",
+            "your_aadhaar_card",
+            "spouse_aadhaar_card",
         )
 
 

@@ -16,17 +16,35 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
     """Admin View for Queuer"""
 
     resource_class = QueuerResource
+    readonly_fields = ("date_applied",)
     list_display = (
         "name",
         "building_applied",
         "current_waitlist",
+        "all_verified",
         "placed",
         "contact_number",
         "email",
         "marriage_certificate",
     )
-    list_filter = ("building_applied", "placed")
+    list_filter = (
+        "building_applied",
+        "placed",
+    )
     search_fields = ("name", "contact_number")
+    # fieldsets = (
+    #     (None, {'fields': ["building_applied", "placed", "room_number", ]}),
+
+    #     ("Personal Info", {
+    #         'fields': ["name",
+    #                    "contact_number",
+    #                    "email", ]
+    #     }),
+
+    #     ("Certificates", {
+    #         'fields': ["marriage_certificate"]
+    #     })
+    # )
     form = QueuerAdminForm
 
     def get_export_formats(self):
