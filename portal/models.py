@@ -120,7 +120,7 @@ class Queuer(models.Model):
             """ If an option is unchecked later, again remove the verified time """
             self.verified_time = None
 
-        if self.room_number:
+        if self.room_number_if_placed:
             # if entered room number, candidate is placed.
             self.placed = True
         else:
