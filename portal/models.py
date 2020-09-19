@@ -100,7 +100,7 @@ class Queuer(models.Model):
             self.waitlist_Type1 = (
                     Queuer.objects.filter(
                         # building_applied=self.building_applied,
-                        building__name__contains= "Type - I",
+                        building__name__contains= "Type - 1",
                         placed=False
                     ).count()
                     + 1
@@ -151,7 +151,7 @@ class Building(models.Model):
 
     name = models.CharField(max_length=128, db_index=True, unique=True)
     occupancy = models.IntegerField(default=800, null=False,)
-    queuer = models.ForeignKey("Queuer", on_delete=models.CASCADE)
+    queuer = models.ForeignKey("Queuer", on_delete=models.CASCADE, null=True)
     # current_waitlist_done = models.IntegerField(default=0,)
     # placed = models.IntegerField(default=0,)
 
