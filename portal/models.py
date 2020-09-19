@@ -3,22 +3,6 @@ from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
 
-class Building(models.Model):
-    """Has the buildings which are to be populated."""
-
-    name = models.CharField(max_length=128, db_index=True, unique=True)
-    occupancy = models.IntegerField(default=800, null=False,)
-    # current_waitlist_done = models.IntegerField(default=0,)
-    # placed = models.IntegerField(default=0,)
-
-    class Meta:
-        verbose_name = "building"
-        verbose_name_plural = "buildings"
-
-    def __str__(self):
-        return self.name
-
-
 class Queuer(models.Model):
     """People who are currently in queue."""
 
@@ -26,7 +10,7 @@ class Queuer(models.Model):
         null=False, default=timezone.now, editable=False
     )
 
-    building_applied = models.ForeignKey("Building", on_delete=models.PROTECT)
+    # building_applied = models.ForeignKey("Building", on_delete=models.PROTECT)
     placed = models.BooleanField(null=False, default=False)
     room_number_if_placed = models.CharField(max_length=6, null=True, blank=True)
 
@@ -35,8 +19,10 @@ class Queuer(models.Model):
     roll_number = models.CharField(max_length=10)
     contact_number = PhoneNumberField(default="",)
     spouse_name = models.CharField(max_length=126,)
-    waitlist_number = models.IntegerField(default=0, db_index=True, editable=False)
-
+    # waitlist_number = models.IntegerField(default=0, db_index=True, editable=False)
+    waitlist_Type1 = models.IntegerField(default=0, db_index=True, editable=False)
+    waitlist_Tulsi = models.IntegerField(default=0, db_index=True, editable=False)
+    waitlist_MRSB = models.IntegerField(default=0, db_index=True, editable=False)
     marriage_certificate_verified = models.BooleanField(null=False, default=False)
     aadhaar_card_verified = models.BooleanField(null=False, default=False)
     spouse_aadhaar_card_verified = models.BooleanField(null=False, default=False)
@@ -55,8 +41,8 @@ class Queuer(models.Model):
     class Meta:
         verbose_name = "queuer"
         verbose_name_plural = "queuers"
-        unique_together = ("building_applied", "waitlist_number")
-        unique_together = ("name", "roll_number", "building_applied")
+        # unique_together = ("building_applied", "waitlist_number")
+        # unique_together = ("name", "roll_number", "building_applied")
 
     def __str__(self):
         return self.name
@@ -80,7 +66,7 @@ class Queuer(models.Model):
 
         initDateTime = Queuer.objects.earliest("date_applied").date_applied
         sort_verified_time = Queuer.objects.filter(
-            building_applied=self.building_applied,
+            # building_applied=self.building_applied,
             placed=False,
             verified_time__range=[initDateTime, self.verified_time],
             marriage_certificate_verified=True,
@@ -104,11 +90,36 @@ class Queuer(models.Model):
                 self.verified_time = timezone.now()
 
         if not self.id:
-            self.waitlist_number = (
-                Queuer.objects.filter(
-                    building_applied=self.building_applied, placed=False
-                ).count()
-                + 1
+            # self.waitlist_number = (
+            #     Queuer.objects.filter(
+            #         # building_applied=self.building_applied,
+            #         placed=False
+            #     ).count()
+            #     + 1
+            # )
+            self.waitlist_Type1 = (
+                    Queuer.objects.filter(
+                        # building_applied=self.building_applied,
+                        building__name__contains= "Type - I",
+                        placed=False
+                    ).count()
+                    + 1
+            )
+            self.waitlist_Tulsi = (
+                    Queuer.objects.filter(
+                        # building_applied=self.building_applied,
+                        building__name__contains="Tulsi",
+                        placed=False
+                    ).count()
+                    + 1
+            )
+            self.waitlist_MRSB = (
+                    Queuer.objects.filter(
+                        # building_applied=self.building_applied,
+                        building__name__contains="MRSB",
+                        placed=False
+                    ).count()
+                    + 1
             )
             self.date_applied = timezone.now()
 
@@ -123,7 +134,30 @@ class Queuer(models.Model):
         if self.room_number_if_placed:
             # if entered room number, candidate is placed.
             self.placed = True
+            # self.building_applied.occupancy -= 1
+            # print(self.building_applied.occupancy)
+            # self.building_applied.save()
         else:
             self.placed = False
 
         super(Queuer, self).save()
+
+
+
+
+
+class Building(models.Model):
+    """Has the buildings which are to be populated."""
+
+    name = models.CharField(max_length=128, db_index=True, unique=True)
+    occupancy = models.IntegerField(default=800, null=False,)
+    queuer = models.ForeignKey("Queuer", on_delete=models.CASCADE)
+    # current_waitlist_done = models.IntegerField(default=0,)
+    # placed = models.IntegerField(default=0,)
+
+    class Meta:
+        verbose_name = "building"
+        verbose_name_plural = "buildings"
+
+    def __str__(self):
+        return self.name

@@ -19,7 +19,7 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
     readonly_fields = ("date_applied",)
     list_display = (
         "name",
-        "building_applied",
+        # "building_applied",
         "current_waitlist",
         "all_verified",
         "placed",
@@ -28,7 +28,7 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
         "marriage_certificate",
     )
     list_filter = (
-        "building_applied",
+        # "building_applied",
         "placed",
     )
     search_fields = ("name", "contact_number")

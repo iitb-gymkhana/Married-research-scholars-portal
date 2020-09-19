@@ -15,7 +15,7 @@ class QueuerForm(forms.ModelForm):
     class Meta:
         model = Queuer
         fields = (
-            "building_applied",
+            # "building_applied",
             "name",
             "email",
             "roll_number",
@@ -33,4 +33,4 @@ class QueuerAdminForm(forms.ModelForm):
     class Meta:
         model = Queuer
         fields = "__all__"
-        exclude = ("waitlist_number",)
+        exclude = ("waitlist_Type1","waitlist_Tulsi", "waitlist_MRSB")

@@ -10,14 +10,16 @@
     font-size: 16px;
   }
 </style>
+    <!-- CSS only -->
+
 {% endblock %}
 {% block main %}
-<div class="container">
+<div class="container p-3 my-3">
   <h2>Homepage</h2>
-  <p>Hello {{user.first_name}}
+  <p>Hello {{user.first_name}}  {{ user.last_name }}
     <!-- from {{ user.userprofile.hostel_name }} -->
     ! </p>
-  <a href="{% url 'portal:apply' %}"><button> Apply for a building </button></a>
-  <a href="{% url 'portal:thanks' %}"><button> Waitlist </button></a>
+  <a href="{% url 'portal:apply' %}"><button class="btn btn-info"> Apply for a building </button></a>
+  <a href="{% url 'portal:thanks' %}"><button class="btn btn-info"> Waitlist </button></a>
 </div>
 {% endblock %}

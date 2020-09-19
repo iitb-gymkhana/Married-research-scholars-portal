@@ -42,9 +42,9 @@ def waitlist(request):
     queues = Queuer.objects.filter(roll_number=user_roll_number)
     waiting = {}
     for queue in queues:
-        waiting[queue.building_applied.name] = queue.current_waitlist
-
-    print(waiting)
+        waiting["Type - 1"] = queue.waitlist_Type1
+        waiting['Tulsi'] = queue.waitlist_Tulsi
+        waiting['MRSB'] = queue.waitlist_MRSB
     return render(request, "portal/waitlist.html", {"waitlist": waiting})
 
 
