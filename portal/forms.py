@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Queuer
+from .models import Queuer, Dependant
 
 
 class QueuerForm(forms.ModelForm):
@@ -21,10 +21,13 @@ class QueuerForm(forms.ModelForm):
             "roll_number",
             "contact_number",
             "spouse_name",
+            # "dependant",
             "marriage_certificate",
             "your_aadhaar_card",
             "spouse_aadhaar_card",
         )
+
+    dependant = forms.ModelChoiceField(Queuer.objects.filter(dependant__isnull=False), empty_label=None)
 
 
 class QueuerAdminForm(forms.ModelForm):

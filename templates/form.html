@@ -16,19 +16,10 @@
 <div class="container-fluid p-3 my-3">
     <h1 style="color: black; margin-left: 30%; margin-right: auto">Application for Family Accomodation</h1>
 </div>
-<div class="container">
-    <p style="margin-left: 0">The Joint Deputy Registrar<br>
-    Hostel Co-ordinating Unit<br>
-    IIT, Powai, Mumbai - 400 076</p>
-    <p style="margin-left: 0">
-        Dear Sir,<br>
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  I am a married Research Scholar.  Kindly allot me family accommodation.
-    </p>
-</div>
 <div class="container p-3 my-3">
     {% for field in form.visible_fields %}
 <div class="form-group">
-  {{ field.label_tag }}
+  <div class="" style="width: available">{{ field.label_tag }}</div>
   {% if form.is_bound %}
   {% if field.errors %}
   {% render_field field class="form-control is-invalid" %}

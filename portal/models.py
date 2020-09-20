@@ -2,6 +2,21 @@ from django.db import models
 from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
+class Building(models.Model):
+    """Has the buildings which are to be populated."""
+
+    name = models.CharField(max_length=128, db_index=True, unique=True)
+    occupancy = models.IntegerField(default=800, null=False,)
+    # queuer = models.ForeignKey("Queuer", on_delete=models.CASCADE, null=True)
+    # current_waitlist_done = models.IntegerField(default=0,)
+    # placed = models.IntegerField(default=0,)
+
+    class Meta:
+        verbose_name = "building"
+        verbose_name_plural = "buildings"
+
+    def __str__(self):
+        return self.name
 
 class Queuer(models.Model):
     """People who are currently in queue."""
@@ -10,7 +25,7 @@ class Queuer(models.Model):
         null=False, default=timezone.now, editable=False
     )
 
-    # building_applied = models.ForeignKey("Building", on_delete=models.PROTECT)
+    building = models.ForeignKey("Building", on_delete=models.PROTECT, null=True)
     placed = models.BooleanField(null=False, default=False)
     room_number_if_placed = models.CharField(max_length=6, null=True, blank=True)
 
@@ -23,6 +38,11 @@ class Queuer(models.Model):
     waitlist_Type1 = models.IntegerField(default=0, db_index=True, editable=False)
     waitlist_Tulsi = models.IntegerField(default=0, db_index=True, editable=False)
     waitlist_MRSB = models.IntegerField(default=0, db_index=True, editable=False)
+
+    # type1 = models.ForeignKey("Building", related_name="Type1",on_delete=models.PROTECT, null=True)
+    # tulsi = models.ForeignKey("Building", related_name="Tulsi", on_delete=models.PROTECT, null=True)
+    # mrsb = models.ForeignKey("Building", related_name="MRSB", on_delete=models.PROTECT, null=True)
+
     marriage_certificate_verified = models.BooleanField(null=False, default=False)
     aadhaar_card_verified = models.BooleanField(null=False, default=False)
     spouse_aadhaar_card_verified = models.BooleanField(null=False, default=False)
@@ -34,6 +54,7 @@ class Queuer(models.Model):
     your_aadhaar_card = models.FileField(upload_to="your_aadhaar_card/",)
     spouse_aadhaar_card = models.FileField(upload_to="spouse_aadhaar_card/",)
 
+
     # At any point of time:
     #   people living in building = count(placed=True, building_applied)
     #   waitlist_number = count(Queuer) - count(placed=True)
@@ -41,8 +62,8 @@ class Queuer(models.Model):
     class Meta:
         verbose_name = "queuer"
         verbose_name_plural = "queuers"
-        # unique_together = ("building_applied", "waitlist_number")
-        # unique_together = ("name", "roll_number", "building_applied")
+        unique_together = ("name", "roll_number", "building")
+        unique_together = ("roll_number", "building")
 
     def __str__(self):
         return self.name
@@ -99,15 +120,13 @@ class Queuer(models.Model):
             # )
             self.waitlist_Type1 = (
                     Queuer.objects.filter(
-                        # building_applied=self.building_applied,
-                        building__name__contains= "Type - 1",
+                        building__name__contains="Type",
                         placed=False
                     ).count()
                     + 1
             )
             self.waitlist_Tulsi = (
                     Queuer.objects.filter(
-                        # building_applied=self.building_applied,
                         building__name__contains="Tulsi",
                         placed=False
                     ).count()
@@ -115,8 +134,7 @@ class Queuer(models.Model):
             )
             self.waitlist_MRSB = (
                     Queuer.objects.filter(
-                        # building_applied=self.building_applied,
-                        building__name__contains="MRSB",
+                        building__name__contains="Type",
                         placed=False
                     ).count()
                     + 1
@@ -142,22 +160,13 @@ class Queuer(models.Model):
 
         super(Queuer, self).save()
 
-
-
-
-
-class Building(models.Model):
-    """Has the buildings which are to be populated."""
-
-    name = models.CharField(max_length=128, db_index=True, unique=True)
-    occupancy = models.IntegerField(default=800, null=False,)
-    queuer = models.ForeignKey("Queuer", on_delete=models.CASCADE, null=True)
-    # current_waitlist_done = models.IntegerField(default=0,)
-    # placed = models.IntegerField(default=0,)
+class Dependant(models.Model):
+    """A person belonging to the family of the applicant"""
+    queuer = models.ForeignKey(Queuer, on_delete=models.CASCADE)
+    name = models.CharField(max_length=126, null=False)
+    contact_number = PhoneNumberField(default="", blank=True)
+    photo = models.FileField(upload_to="dependants/", blank=True)
 
     class Meta:
-        verbose_name = "building"
-        verbose_name_plural = "buildings"
-
-    def __str__(self):
-        return self.name
+        verbose_name = "Dependant"
+        verbose_name_plural = "Dependants"

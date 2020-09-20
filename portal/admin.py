@@ -4,7 +4,7 @@ from import_export.admin import ExportMixin
 from import_export.formats import base_formats
 
 from .forms import QueuerAdminForm
-from .models import Building, Queuer
+from .models import Building, Queuer, Dependant
 
 
 class QueuerResource(resources.ModelResource):
@@ -20,15 +20,20 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
         "name",
         # "building_applied",
-        "current_waitlist",
+        "waitlist_Type1",
+        "waitlist_Tulsi",
+        "waitlist_MRSB",
         "all_verified",
         "placed",
         "contact_number",
         "email",
-        "marriage_certificate",
+        # "marriage_certificate",
     )
     list_filter = (
-        # "building_applied",
+        "building",
+        # "tulsi",
+        # "mrsb",
+        # "type1",
         "placed",
     )
     search_fields = ("name", "contact_number")
@@ -76,3 +81,4 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Building)
 admin.site.register(Queuer, CustomQueuerAdmin)
+admin.site.register(Dependant)
