@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .forms import QueuerForm
-from .models import Queuer
+from .forms import QueuerForm, ApplicantForm
+from .models import Queuer, Applicant
 
 
 @login_required
@@ -20,6 +20,7 @@ def apply(request):
         # POST['name'] = request.user.first_name + request.user.last_name
         # POST['email'] = request.user.email
         form = QueuerForm(POST, request.FILES)
+        form = ApplicantForm(POST, request.FILES)
         # TODO: can't sent in POST requests when fields are disabled,.
 
         if form.is_valid():
@@ -31,6 +32,13 @@ def apply(request):
                 "name": request.user.first_name + " " + request.user.last_name,
                 "roll_number": request.user.username,
                 "email": request.user.email,
+            }
+        )
+        form = ApplicantForm(
+            initial={
+                'name': request.user.first_name + ' ' + request.user.last_name,
+                'roll_no': request.user.username,
+                'email': request.user.email
             }
         )
     return render(request, "portal/apply.html", {"form": form})

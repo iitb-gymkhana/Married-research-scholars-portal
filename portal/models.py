@@ -18,6 +18,7 @@ class Building(models.Model):
     def __str__(self):
         return self.name
 
+
 class Queuer(models.Model):
     """People who are currently in queue."""
 
@@ -32,7 +33,19 @@ class Queuer(models.Model):
     name = models.CharField(max_length=126,)
     email = models.EmailField(max_length=254)
     roll_number = models.CharField(max_length=10)
+    # date_of_registration = models.DateField(null=False)
+    # date_of_marriage = models.DateField(null=False)
     contact_number = PhoneNumberField(default="",)
+    # permanent_address = models.TextField(null=False)
+    scholarship = models.CharField(max_length=128, choices=[
+        ('I', "Institute"),
+        ('CSIR', 'CSIR'),
+        ('UGC', 'UGC'),
+        ('None', 'None')
+    ],
+    null=False,
+    default="None")
+    scholarship_start_date = models.DateField(null=True)
     spouse_name = models.CharField(max_length=126,)
     # waitlist_number = models.IntegerField(default=0, db_index=True, editable=False)
     waitlist_Type1 = models.IntegerField(default=0, db_index=True, editable=False)
@@ -54,7 +67,7 @@ class Queuer(models.Model):
     your_aadhaar_card = models.FileField(upload_to="your_aadhaar_card/",)
     spouse_aadhaar_card = models.FileField(upload_to="spouse_aadhaar_card/",)
 
-
+    # dependant = models.ForeignKey(Dependant, on_delete=models.CASCADE, null=True)
     # At any point of time:
     #   people living in building = count(placed=True, building_applied)
     #   waitlist_number = count(Queuer) - count(placed=True)
@@ -162,11 +175,60 @@ class Queuer(models.Model):
 
 class Dependant(models.Model):
     """A person belonging to the family of the applicant"""
-    queuer = models.ForeignKey(Queuer, on_delete=models.CASCADE)
+    # queuer = models.ForeignKey(Queuer, on_delete=models.CASCADE)
     name = models.CharField(max_length=126, null=False)
     contact_number = PhoneNumberField(default="", blank=True)
     photo = models.FileField(upload_to="dependants/", blank=True)
-
+    relation = models.CharField(max_length=128, choices=[
+        ("F", 'Father'),
+        ('M', 'Mother'),
+        ('FIL', 'Father-in-Law'),
+        ('MIL', 'Mother-in-Law'),
+        ('C', 'Child')
+    ], null=True)
+    queuer = models.ForeignKey(Queuer, on_delete=models.CASCADE, null=True)
     class Meta:
         verbose_name = "Dependant"
         verbose_name_plural = "Dependants"
+
+    def __str__(self):
+        return self.queuer.name + '_' + self.relation
+
+
+
+class Applicant(models.Model):
+    name = models.CharField(max_length=128)
+    roll_no = models.CharField(max_length=128)
+    date_of_registration = models.DateField(null=False)
+    department = models.CharField(max_length=128, help_text="For example, 'Energy Science and Engineering'", null=False)
+    date_of_marriage = models.DateField(null=True, blank=False)
+    email = models.EmailField(max_length=256)
+    phone_num = PhoneNumberField(default='')
+    permanent_address = models.TextField(default='', null=False)
+    scholarship = models.CharField(max_length=128, choices=[
+        ('I', 'Institute'),
+        ('CSIR', 'CSIR'),
+        ('UGC', 'UGC')
+    ], null=True)
+    date_of_scholarship = models.DateField(null=True)
+    course_work_completed_on = models.DateField(help_text='Give the expected date')
+    course_work_completed_by = models.CharField(max_length=128)
+    attachments = models.ForeignKey('Attachment', on_delete=models.CASCADE, unique=True)
+
+    class Meta:
+        verbose_name = 'Applicant'
+        verbose_name_plural = 'Applicants'
+        unique_together = ('roll_no', 'attachments')
+
+
+class Attachment(models.Model):
+    marriage_certificate = models.FileField(upload_to='marriage_certificates/')
+    pic_with_spouse = models.FileField(upload_to='photo_with_spouse/')
+    coursework_grade_sheet = models.FileField(upload_to='grade_sheet/')
+    recommendation_of_guide = models.FileField(upload_to='guide_recommendation/')
+
+    class Meta:
+        verbose_name = 'Attachment'
+        verbose_name_plural = 'Attachments'
+
+

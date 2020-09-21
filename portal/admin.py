@@ -12,6 +12,23 @@ class QueuerResource(resources.ModelResource):
         model = Queuer
 
 
+class DependantResource(resources.ModelResource):
+    class Meta:
+        model = Dependant
+
+class CustomDependantAdmin(admin.ModelAdmin):
+    """Admin View for Dependant"""
+
+    resource_class = DependantResource
+    readonly_fields = ("__all__")
+    list_display = (
+        "queuer",
+        "name",
+        "contact_number",
+        "photo"
+    )
+
+
 class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
     """Admin View for Queuer"""
 
@@ -62,10 +79,10 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
 
         return [f for f in formats if f().can_export()]
 
-    def Mark_as_placed(modeladmin, news, queryset):
+    def Mark_as_placed(self, modeladmin, news, queryset):
         queryset.update(placed=True)
 
-    def Mark_as_not_placed(modeladmin, news, queryset):
+    def Mark_as_not_placed(self, modeladmin, news, queryset):
         queryset.update(placed=False)
 
     actions = [

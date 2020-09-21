@@ -1,7 +1,17 @@
 from django import forms
+from django.forms import formset_factory, modelformset_factory
+from .models import Queuer, Dependant, Applicant, Attachment
 
-from .models import Queuer, Dependant
 
+class ApplicantForm(forms.ModelForm):
+    """Form Definition for Applicant"""
+    def __init__(self, *args, **kwargs):
+        super(ApplicantForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Applicant
+        fields = '__all__'
+    
 
 class QueuerForm(forms.ModelForm):
     """Form definition for Queuer."""
@@ -27,7 +37,7 @@ class QueuerForm(forms.ModelForm):
             "spouse_aadhaar_card",
         )
 
-    dependant = forms.ModelChoiceField(Queuer.objects.filter(dependant__isnull=False), empty_label=None)
+    dependant = forms.ModelChoiceField(Dependant.objects.all())
 
 
 class QueuerAdminForm(forms.ModelForm):
