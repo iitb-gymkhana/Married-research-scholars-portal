@@ -4,8 +4,7 @@ from import_export.admin import ExportMixin
 from import_export.formats import base_formats
 
 from .forms import QueuerAdminForm
-from .models import Building, Queuer, Dependant
-
+from .models import Building, Queuer, Dependant, Applicant
 
 class QueuerResource(resources.ModelResource):
     class Meta:
@@ -28,6 +27,19 @@ class CustomDependantAdmin(admin.ModelAdmin):
         "photo"
     )
 
+class ApplicantResource(resources.ModelResource):
+    class Meta:
+        model = Applicant
+
+
+class ApplicantAdmin(admin.ModelAdmin):
+    resource_class = ApplicantResource
+    list_display = (
+        'name',
+        'roll_number',
+        'email',
+        'department'
+    )
 
 class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
     """Admin View for Queuer"""
@@ -99,3 +111,4 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
 admin.site.register(Building)
 admin.site.register(Queuer, CustomQueuerAdmin)
 admin.site.register(Dependant)
+admin.site.register(Applicant, ApplicantAdmin)

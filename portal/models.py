@@ -198,37 +198,34 @@ class Dependant(models.Model):
 
 class Applicant(models.Model):
     name = models.CharField(max_length=128)
-    roll_no = models.CharField(max_length=128)
+    roll_number = models.CharField(max_length=128)
     date_of_registration = models.DateField(null=False)
     department = models.CharField(max_length=128, help_text="For example, 'Energy Science and Engineering'", null=False)
-    date_of_marriage = models.DateField(null=True, blank=False)
+    date_of_marriage = models.DateField(null=True, default='', blank=False)
     email = models.EmailField(max_length=256)
-    phone_num = PhoneNumberField(default='')
+    phone_number = PhoneNumberField(default='')
     permanent_address = models.TextField(default='', null=False)
     scholarship = models.CharField(max_length=128, choices=[
         ('I', 'Institute'),
         ('CSIR', 'CSIR'),
         ('UGC', 'UGC')
     ], null=True)
-    date_of_scholarship = models.DateField(null=True)
-    course_work_completed_on = models.DateField(help_text='Give the expected date')
+    date_of_scholarship = models.DateField(null=True, default='')
+    course_work_completed_on = models.DateField(null=True, default='',help_text='Give the expected date')
     course_work_completed_by = models.CharField(max_length=128)
-    attachments = models.ForeignKey('Attachment', on_delete=models.CASCADE, unique=True)
+    marriage_certificate = models.FileField(upload_to='marriage_certificates/', null=True, blank=False)
+    joint_photograph_with_spouse = models.FileField(upload_to='photo_with_spouse/', null=True, blank=False)
+    coursework_grade_sheet = models.FileField(upload_to='grade_sheet/', null=True, blank=False)
+    recommendation_of_guide_for_accomodation = models.FileField(upload_to='guide_recommendation/', null=True, blank=False)
+    spouse_name = models.CharField(max_length=128, null=True, blank=False)
+    spouse_roll_number = models.CharField(max_length=128, null=True, blank=False, default='N/A')
+    spouse_designation = models.CharField(max_length=128, null=True, blank=False, default='N/A')
 
     class Meta:
         verbose_name = 'Applicant'
         verbose_name_plural = 'Applicants'
-        unique_together = ('roll_no', 'attachments')
 
-
-class Attachment(models.Model):
-    marriage_certificate = models.FileField(upload_to='marriage_certificates/')
-    pic_with_spouse = models.FileField(upload_to='photo_with_spouse/')
-    coursework_grade_sheet = models.FileField(upload_to='grade_sheet/')
-    recommendation_of_guide = models.FileField(upload_to='guide_recommendation/')
-
-    class Meta:
-        verbose_name = 'Attachment'
-        verbose_name_plural = 'Attachments'
+    def __str__(self):
+        return self.name
 
 

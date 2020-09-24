@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .forms import QueuerForm, ApplicantForm
+from .forms import QueuerForm, ApplicantForm, UndertakingForm
 from .models import Queuer, Applicant
 
 
@@ -19,21 +19,23 @@ def apply(request):
         # POST['roll_number'] = request.user.username
         # POST['name'] = request.user.first_name + request.user.last_name
         # POST['email'] = request.user.email
-        form = QueuerForm(POST, request.FILES)
+        # form = QueuerForm(POST, request.FILES)
         form = ApplicantForm(POST, request.FILES)
+        form2 = UndertakingForm(POST)
         # TODO: can't sent in POST requests when fields are disabled,.
 
         if form.is_valid():
             form.save()
+            form2.save()
             return redirect(reverse("portal:thanks"))
     else:
-        form = QueuerForm(
-            initial={
-                "name": request.user.first_name + " " + request.user.last_name,
-                "roll_number": request.user.username,
-                "email": request.user.email,
-            }
-        )
+        # form = QueuerForm(
+        #     initial={
+        #         "name": request.user.first_name + " " + request.user.last_name,
+        #         "roll_number": request.user.username,
+        #         "email": request.user.email,
+        #     }
+        # )
         form = ApplicantForm(
             initial={
                 'name': request.user.first_name + ' ' + request.user.last_name,
@@ -41,7 +43,8 @@ def apply(request):
                 'email': request.user.email
             }
         )
-    return render(request, "portal/apply.html", {"form": form})
+        form2 = UndertakingForm()
+    return render(request, "portal/apply.html", {"form": form, 'form2': form2})
 
 
 @login_required

@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import formset_factory, modelformset_factory
-from .models import Queuer, Dependant, Applicant, Attachment
+from .models import Queuer, Dependant, Applicant
 
 
 class ApplicantForm(forms.ModelForm):
@@ -11,8 +11,25 @@ class ApplicantForm(forms.ModelForm):
     class Meta:
         model = Applicant
         fields = '__all__'
-    
+        exclude = (
+            'spouse_name',
+            'spouse_roll_number',
+            'spouse_designation'
+        )
 
+class UndertakingForm(forms.ModelForm):
+    """Form Definition for Undertaking"""
+    def __init__(self, *args, **kwargs):
+        super(UndertakingForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Applicant
+        exclude = '__all__'
+        fields = (
+            'spouse_name',
+            'spouse_roll_number',
+            'spouse_designation'
+        )
 class QueuerForm(forms.ModelForm):
     """Form definition for Queuer."""
 
@@ -47,3 +64,6 @@ class QueuerAdminForm(forms.ModelForm):
         model = Queuer
         fields = "__all__"
         exclude = ("waitlist_Type1","waitlist_Tulsi", "waitlist_MRSB")
+
+# class UndertakingForm(forms.Form):
+#
