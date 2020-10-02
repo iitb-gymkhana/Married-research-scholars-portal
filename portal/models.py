@@ -225,6 +225,7 @@ class Applicant(models.Model):
         verbose_name = 'Applicant'
         verbose_name_plural = 'Applicants'
 
+
     def __str__(self):
         return self.name
 

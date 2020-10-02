@@ -132,3 +132,4 @@ LOGOUT_URL = "oauth:logout"
 LOGIN_REDIRECT_URL = "home"
 
 AUTH_PROFILE_MODULE = "core.UserProfile"
+

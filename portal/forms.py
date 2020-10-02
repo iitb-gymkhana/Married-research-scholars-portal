@@ -1,8 +1,6 @@
 from django import forms
 from django.forms import formset_factory, modelformset_factory
 from .models import Queuer, Dependant, Applicant
-
-
 class ApplicantForm(forms.ModelForm):
     """Form Definition for Applicant"""
     def __init__(self, *args, **kwargs):
@@ -11,11 +9,17 @@ class ApplicantForm(forms.ModelForm):
     class Meta:
         model = Applicant
         fields = '__all__'
-        exclude = (
-            'spouse_name',
-            'spouse_roll_number',
-            'spouse_designation'
-        )
+        # exclude = (
+        #     'spouse_name',
+        #     'spouse_roll_number',
+        #     'spouse_designation'
+        # )
+        widgets = {
+            'date_of_marriage' : forms.SelectDateWidget,
+            'date_of_registration' : forms.SelectDateWidget,
+            'date_of_scholarship' : forms.SelectDateWidget,
+            'course_work_completed_on' : forms.SelectDateWidget
+        }
 
 class UndertakingForm(forms.ModelForm):
     """Form Definition for Undertaking"""

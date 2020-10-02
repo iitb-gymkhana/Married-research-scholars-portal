@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-
+import logging
 from .forms import QueuerForm, ApplicantForm, UndertakingForm
 from .models import Queuer, Applicant
 
+logger = logging.getLogger(__name__)
 
 @login_required
 def portal(request):
@@ -13,6 +14,7 @@ def portal(request):
 
 @login_required
 def apply(request):
+    filter = ['spouse_name', 'spouse_roll_number', 'spouse_designation']
     if request.method == "POST":
         POST = request.POST
         # POST = request.POST.copy()
@@ -21,12 +23,16 @@ def apply(request):
         # POST['email'] = request.user.email
         # form = QueuerForm(POST, request.FILES)
         form = ApplicantForm(POST, request.FILES)
-        form2 = UndertakingForm(POST)
         # TODO: can't sent in POST requests when fields are disabled,.
 
         if form.is_valid():
             form.save()
-            form2.save()
+            # applicant = Applicant.objects.filter(roll_number=form.cleaned_data['roll_number'])
+            # print(applicant)
+            # applicant.spouse_name = form2.cleaned_data['spouse_name']
+            # applicant.spouse_roll_number = form2.cleaned_data['spouse_roll_number']
+            # applicant.spouse_designation = form2.cleaned_data['spouse_designation']
+            # applicant.save()
             return redirect(reverse("portal:thanks"))
     else:
         # form = QueuerForm(
@@ -43,8 +49,8 @@ def apply(request):
                 'email': request.user.email
             }
         )
-        form2 = UndertakingForm()
-    return render(request, "portal/apply.html", {"form": form, 'form2': form2})
+        # form2 = UndertakingForm()
+    return render(request, "portal/apply.html", {"form": form, 'filter': filter})
 
 
 @login_required

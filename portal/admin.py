@@ -108,7 +108,7 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
 # admin.site.unregister(Group)
 
 # Register your models here.
-admin.site.register(Building)
-admin.site.register(Queuer, CustomQueuerAdmin)
-admin.site.register(Dependant)
+# admin.site.register(Building)
+# admin.site.register(Queuer, CustomQueuerAdmin)
+# admin.site.register(Dependant)
 admin.site.register(Applicant, ApplicantAdmin)
