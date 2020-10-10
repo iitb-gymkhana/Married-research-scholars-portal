@@ -9,11 +9,19 @@ class ApplicantForm(forms.ModelForm):
     class Meta:
         model = Applicant
         fields = '__all__'
-        # exclude = (
-        #     'spouse_name',
-        #     'spouse_roll_number',
-        #     'spouse_designation'
-        # )
+        exclude = (
+            'marriage_certificate_verified',
+            'joint_photograph_with_spouse_verified',
+            'coursework_grade_sheet_verified',
+            'recommendation_of_guide_for_accomodation_verified',
+            'feedback',
+            'waitlist_Type1',
+            'waitlist_Tulsi',
+            'waitlist_MRSB',
+            'date_applied',
+            'verified_time',
+            'occupied',
+        )
         widgets = {
             'date_of_marriage' : forms.SelectDateWidget,
             'date_of_registration' : forms.SelectDateWidget,
@@ -21,19 +29,19 @@ class ApplicantForm(forms.ModelForm):
             'course_work_completed_on' : forms.SelectDateWidget
         }
 
-class UndertakingForm(forms.ModelForm):
-    """Form Definition for Undertaking"""
-    def __init__(self, *args, **kwargs):
-        super(UndertakingForm, self).__init__(*args, **kwargs)
-
-    class Meta:
-        model = Applicant
-        exclude = '__all__'
-        fields = (
-            'spouse_name',
-            'spouse_roll_number',
-            'spouse_designation'
-        )
+# class UndertakingForm(forms.ModelForm):
+#     """Form Definition for Undertaking"""
+#     def __init__(self, *args, **kwargs):
+#         super(UndertakingForm, self).__init__(*args, **kwargs)
+#
+#     class Meta:
+#         model = Applicant
+#         exclude = '__all__'
+#         fields = (
+#             'spouse_name',
+#             'spouse_roll_number',
+#             'spouse_designation'
+#         )
 class QueuerForm(forms.ModelForm):
     """Form definition for Queuer."""
 

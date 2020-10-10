@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 import logging
-from .forms import QueuerForm, ApplicantForm, UndertakingForm
+from .forms import QueuerForm, ApplicantForm
 from .models import Queuer, Applicant
 
 logger = logging.getLogger(__name__)
@@ -49,7 +49,6 @@ def apply(request):
                 'email': request.user.email
             }
         )
-        # form2 = UndertakingForm()
     return render(request, "portal/apply.html", {"form": form, 'filter': filter})
 
 
@@ -57,12 +56,20 @@ def apply(request):
 def waitlist(request):
     user_roll_number = request.user.username
     queues = Queuer.objects.filter(roll_number=user_roll_number)
+    applicants = Applicant.objects.filter(roll_number=user_roll_number)
     waiting = {}
-    for queue in queues:
-        waiting["Type - 1"] = queue.waitlist_Type1
-        waiting['Tulsi'] = queue.waitlist_Tulsi
-        waiting['MRSB'] = queue.waitlist_MRSB
-    return render(request, "portal/waitlist.html", {"waitlist": waiting})
+    feedback = ''
+    all_verified = applicants[0].all_verified()
+    # for queue in queues:
+    #     waiting["Type - 1"] = queue.waitlist_Type1
+    #     waiting['Tulsi'] = queue.waitlist_Tulsi
+    #     waiting['MRSB'] = queue.waitlist_MRSB
+    for applicant in applicants:
+        waiting['Type - 1'] = applicant.waitlist_Type1
+        waiting['Tulsi'] = applicant.waitlist_Tulsi
+        waiting['MRSB'] = applicant.waitlist_MRSB
+        feedback = applicant.feedback
+    return render(request, "portal/waitlist.html", {"waitlist": waiting, "feedback": feedback, "all_verified": all_verified})
 
 
 @login_required

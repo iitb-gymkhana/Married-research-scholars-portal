@@ -38,7 +38,12 @@ class ApplicantAdmin(admin.ModelAdmin):
         'name',
         'roll_number',
         'email',
-        'department'
+        'department',
+        "waitlist_Type1",
+        "waitlist_Tulsi",
+        "waitlist_MRSB",
+        "all_verified",
+        "occupied"
     )
 
 class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
@@ -108,7 +113,7 @@ class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
 # admin.site.unregister(Group)
 
 # Register your models here.
-# admin.site.register(Building)
+admin.site.register(Building)
 # admin.site.register(Queuer, CustomQueuerAdmin)
 # admin.site.register(Dependant)
 admin.site.register(Applicant, ApplicantAdmin)

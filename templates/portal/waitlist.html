@@ -1,27 +1,40 @@
 {% extends 'index.html' %}
 
 {% block main %}
+    {% if not all_verified %}
+        <div class="container p-3 my-3">
+    <strong><b style="color: black">{{ feedback }}</b></strong>
+    </div>
+    {% endif %}
+    {% if all_verified %}
+        <div class="container p-3 my-3">
+    <strong><b style="color: black">Verified!!</b></strong>
+    </div>
+    {% endif %}
 <div class="container">
   if documents not verified, please visit HCU office for document verification within 14 days, else your application
   will
   be deleted.<br><br>
   Documents to bring:
   <ul style="margin: 0;">
-    <li> marriage certificate </li>
-    <li> Your Aadhaar card and a photocopy </li>
-    <li> Aadhaar card of spouse + photocopy </li>
-    <li> Institute ID card </li>
+    <li> Marriage certificate </li>
+    <li> Joint photograph with your spouse (PostCard Size) </li>
+    <li> Course work grade sheet </li>
+    <li> Recommendation of guide for accomodation </li>
   </ul>
   <br><br>
-  Current waitlist number for your applications:
+  {% if all_verified %}
+      Current waitlist number for your applications:
   <br>
   {% for building, value in waitlist.items %}
   <strong>{{ building }}</strong> is {{ value }}
   <br>
   {% endfor %}
+  {% endif %}
   <br>
-  *If waitlist number is N/A, this is because atleast one of your documents is not verified.
-
+  {% if not all_verified %}
+      Your waitlist number is N/A, this is because atleast one of your documents is not verified.
+  {% endif %}
   <br><br>
   Building is allotted based considering verification - first come first serve.
 </div>
