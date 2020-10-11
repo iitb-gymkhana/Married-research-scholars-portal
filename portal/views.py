@@ -71,6 +71,9 @@ def waitlist(request):
         feedback = applicant.feedback
     return render(request, "portal/waitlist.html", {"waitlist": waiting, "feedback": feedback, "all_verified": all_verified})
 
+@login_required
+def occupy(request):
+    return render(request, "portal/occupy.html")
 
 @login_required
 def logout(request):

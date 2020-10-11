@@ -233,7 +233,7 @@ class Applicant(models.Model):
     waitlist_Type1 = models.IntegerField(default='0', db_index=True, editable=False)
     waitlist_Tulsi = models.IntegerField(default=0, db_index=True, editable=False)
     waitlist_MRSB = models.IntegerField(default=0, db_index=True, editable=False)
-    date_applied = models.DateTimeField(null=False, default=timezone.now(), editable=False)
+    date_applied = models.DateTimeField(null=False, default=timezone.now, editable=False)
     verified_time = models.DateTimeField(null=True, blank=True)
     # building = models.ForeignKey('Building', on_delete=models.PROTECT, null=True)
     occupied = models.BooleanField(default=False)

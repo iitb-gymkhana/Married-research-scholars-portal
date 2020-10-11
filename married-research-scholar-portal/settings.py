@@ -75,9 +75,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "married-research-scholar-portal.wsgi.application"
 CRONJOBS = [
-    ('*/1 * * * *', 'married-research-scholar-portal.cron.my_cron_job')
+    ('* * * * *', 'married-research-scholar-portal.cron.my_cron_job'),
+    ('1 * * * *', 'married-research-scholar-portal.cron.send_notif')
 ]
-
+CRONTAB_COMMAND_SUFFIX = '2>&1'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
