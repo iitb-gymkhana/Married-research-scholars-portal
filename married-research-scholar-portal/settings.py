@@ -25,6 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Application definition
 INSTALLED_APPS = [
+    'django_crontab',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -73,7 +74,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "married-research-scholar-portal.wsgi.application"
-
+CRONJOBS = [
+    ('*/1 * * * *', 'married-research-scholar-portal.cron.my_cron_job')
+]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
