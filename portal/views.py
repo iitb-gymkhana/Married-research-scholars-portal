@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 import logging
-from .forms import QueuerForm, ApplicantForm
+from .forms import QueuerForm, ApplicantForm, OccupyingForm
 from .models import Queuer, Applicant
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,23 @@ def waitlist(request):
 
 @login_required
 def occupy(request):
-    return render(request, "portal/occupy.html")
+    filter = 'Type-1'
+    if request.method == "POST":
+        POST = request.POST
+        form = OccupyingForm(POST, request.FILES)
+        if form.is_valid():
+            applicants = Applicant.objects.filter(roll_number=request.user.username)
+            logger.error(form.cleaned_data['occupied_Type1'])
+            for applicant in applicants:
+                applicant.occupied_Type1 = form.cleaned_data['occupied_Type1']
+                applicant.save()
+                pass
+            # form.save()
+            return redirect(reverse("portal:thanks"))
+    else:
+        form = OccupyingForm()
+        logger.error("The form is not posting the data")
+    return render(request, "portal/occupy.html", {"form": form, "filter": filter})
 
 @login_required
 def logout(request):

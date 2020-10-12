@@ -43,7 +43,9 @@ class ApplicantAdmin(admin.ModelAdmin):
         "waitlist_Tulsi",
         "waitlist_MRSB",
         "all_verified",
-        "occupied"
+        "occupied_Type1",
+        "occupied_Tulsi",
+        "occupied_MRSB"
     )
 
 class CustomQueuerAdmin(ExportMixin, admin.ModelAdmin):
