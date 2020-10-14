@@ -25,7 +25,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Application definition
 INSTALLED_APPS = [
-    'django_crontab',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -38,7 +37,13 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "widget_tweaks",
     "import_export",
+    "django_cron"
 ]
+
+CRON_CLASSES = [
+    'married-research-scholar-portal.cron.MyCronJob'
+]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -74,11 +79,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "married-research-scholar-portal.wsgi.application"
-CRONJOBS = [
-    ('* * * * *', 'married-research-scholar-portal.cron.my_cron_job'),
-    ('1 * * * *', 'married-research-scholar-portal.cron.send_notif')
-]
-CRONTAB_COMMAND_SUFFIX = '2>&1'
+
+
+# BROKER_URL = "amqp://"
+# CELERY_ACCEPT_CONTENT = ['pickle']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_REQUEST_SERIALIZER = 'json'
+
+# CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 

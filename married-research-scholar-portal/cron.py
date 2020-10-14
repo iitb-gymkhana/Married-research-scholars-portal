@@ -1,15 +1,12 @@
-from django.core.mail import send_mail
-
-def send_notif():
-    send_mail(
-        'Subject Here',
-        'Here is the message',
-        'ipsit.iitb@gmail.com',
-        ['webnominee.iitb@gmail.com']
-    )
+from django_cron import CronJobBase, Schedule
 
 
+class MyCronJob(CronJobBase):
+    RUN_EVERY_MINS = 1  # every 2 hours
 
-def my_cron_job():
-    print('I will be printed every 1 min')
-    return True
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
+    code = 'my_app.my_cron_job'    # a unique code
+
+    def do(self):
+        print("yay!")
+        pass    # do your thing here

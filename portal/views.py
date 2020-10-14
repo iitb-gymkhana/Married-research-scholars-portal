@@ -59,7 +59,7 @@ def waitlist(request):
     applicants = Applicant.objects.filter(roll_number=user_roll_number)
     waiting = {}
     feedback = ''
-    all_verified = applicants[0].all_verified()
+    all_verified = False
     # for queue in queues:
     #     waiting["Type - 1"] = queue.waitlist_Type1
     #     waiting['Tulsi'] = queue.waitlist_Tulsi
@@ -69,6 +69,7 @@ def waitlist(request):
         waiting['Tulsi'] = applicant.waitlist_Tulsi
         waiting['MRSB'] = applicant.waitlist_MRSB
         feedback = applicant.feedback
+        all_verified = applicant.all_verified()
     return render(request, "portal/waitlist.html", {"waitlist": waiting, "feedback": feedback, "all_verified": all_verified})
 
 @login_required

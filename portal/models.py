@@ -3,6 +3,13 @@ from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 import logging
 logger = logging.getLogger('__name__')
+from django.core.mail import send_mail
+
+# Total Vacancies
+TULSI = 4
+TYPE1 = 4
+MRSB = 4
+
 
 class Building(models.Model):
     """Has the buildings which are to be populated."""
@@ -256,49 +263,37 @@ class Applicant(models.Model):
                     )
     all_verified.boolean = True
 
-    def current_waitlist(self):
-        if not self.all_verified():
-            return "N/A"
-        initDateTime = Applicant.objects.earliest("date_applied").date_applied
-        sort_verified_time = Applicant.objects.filter(
-            verified_time__range=[initDateTime, self.verified_time],
-            marriage_certificate_verified=True,
-            joint_photograph_with_spouse_verified=True,
-            coursework_grade_sheet_verified=True,
-            recommendation_of_guide_for_accomodation_verified=True
-        ).count()
-
-    def save(self):
-        if not self.pk:
+    def save(self, flag=True, *args, **kwargs):
+        if not self.id:
             if not self.date_applied:
                 self.date_applied = timezone.now()
-            if self.all_verified():
-                self.verified_time = timezone.now()
-            if self.all_verified():
-                self.waitlist_Type1 = 1 + len(Applicant.objects.filter(
-                    occupied_Type1=False,
-                    marriage_certificate_verified=True,
-                    joint_photograph_with_spouse_verified=True,
-                    coursework_grade_sheet_verified=True,
-                    recommendation_of_guide_for_accomodation_verified=True,
-                    # building__name__contains='Type',
-                ))
-                self.waitlist_Tulsi = 1 + len(Applicant.objects.filter(
-                    occupied_Tulsi=False,
-                    marriage_certificate_verified=True,
-                    joint_photograph_with_spouse_verified=True,
-                    coursework_grade_sheet_verified=True,
-                    recommendation_of_guide_for_accomodation_verified=True
-                    # building__name__contains='Tulsi',
-                ))
-                self.waitlist_MRSB = 1 + len(Applicant.objects.filter(
-                    occupied_MRSB=False,
-                    marriage_certificate_verified=True,
-                    joint_photograph_with_spouse_verified=True,
-                    coursework_grade_sheet_verified=True,
-                    recommendation_of_guide_for_accomodation_verified=True
-                    # building__name__contains='MRSB',
-                ))
+            # if self.all_verified():
+            #     self.verified_time = timezone.now()
+            # if self.all_verified():
+            #     self.waitlist_Type1 = 1 + len(Applicant.objects.filter(
+            #         occupied_Type1=False,
+            #         marriage_certificate_verified=True,
+            #         joint_photograph_with_spouse_verified=True,
+            #         coursework_grade_sheet_verified=True,
+            #         recommendation_of_guide_for_accomodation_verified=True,
+            #         # building__name__contains='Type',
+            #     ))
+            #     self.waitlist_Tulsi = 1 + len(Applicant.objects.filter(
+            #         occupied_Tulsi=False,
+            #         marriage_certificate_verified=True,
+            #         joint_photograph_with_spouse_verified=True,
+            #         coursework_grade_sheet_verified=True,
+            #         recommendation_of_guide_for_accomodation_verified=True
+            #         # building__name__contains='Tulsi',
+            #     ))
+            #     self.waitlist_MRSB = 1 + len(Applicant.objects.filter(
+            #         occupied_MRSB=False,
+            #         marriage_certificate_verified=True,
+            #         joint_photograph_with_spouse_verified=True,
+            #         coursework_grade_sheet_verified=True,
+            #         recommendation_of_guide_for_accomodation_verified=True
+            #         # building__name__contains='MRSB',
+            #     ))
 
                 # if self.occupied_MRSB and not self.occupied_Tulsi and not self.occupied_Type1:
                 #     self.waitlist_MRSB = 0
@@ -318,6 +313,8 @@ class Applicant(models.Model):
                 #             applicant.waitlist_Type1 -= 1
                 #             applicant.save()
 
+            
+        else:
             if not self.verified_time:
                 if self.all_verified():
                     self.verified_time = timezone.now()
@@ -325,53 +322,74 @@ class Applicant(models.Model):
             if not self.all_verified():
                 """ If an option is unchecked later, again remove the verified time """
                 self.verified_time = None
-        else:
-            if self.all_verified() and not (self.occupied_MRSB or self.occupied_Tulsi or self.occupied_Type1) and self.waitlist_Type1 == 0:
-                self.waitlist_Type1 = 1 + len(Applicant.objects.filter(
-                    occupied_Type1=False,
-                    marriage_certificate_verified=True,
-                    joint_photograph_with_spouse_verified=True,
-                    coursework_grade_sheet_verified=True,
-                    recommendation_of_guide_for_accomodation_verified=True,
-                    # building__name__contains='Type',
-                ))
-                self.waitlist_Tulsi = 1 + len(Applicant.objects.filter(
-                    occupied_Tulsi=False,
-                    marriage_certificate_verified=True,
-                    joint_photograph_with_spouse_verified=True,
-                    coursework_grade_sheet_verified=True,
-                    recommendation_of_guide_for_accomodation_verified=True
-                    # building__name__contains='Tulsi',
-                ))
-                self.waitlist_MRSB = 1 + len(Applicant.objects.filter(
-                    occupied_MRSB=False,
-                    marriage_certificate_verified=True,
-                    joint_photograph_with_spouse_verified=True,
-                    coursework_grade_sheet_verified=True,
-                    recommendation_of_guide_for_accomodation_verified=True
-                    # building__name__contains='MRSB',
-                ))
-            if self.occupied_MRSB or self.occupied_Tulsi or self.occupied_Type1:
-                self.waitlist_Type1 = 0
-                self.waitlist_Tulsi = 0
-                self.waitlist_MRSB = 0
-                for applicant in Applicant.objects.filter(marriage_certificate_verified=True,
-                                                           joint_photograph_with_spouse_verified=True,
-                                                           coursework_grade_sheet_verified=True,
-                                                           recommendation_of_guide_for_accomodation_verified=True):
-                    print(applicant)
-                    if applicant.name != self.name and applicant.roll_number != self.roll_number:
-                        print(applicant.name)
-                        if applicant.waitlist_MRSB > self.waitlist_MRSB:
-                            applicant.waitlist_MRSB -= 1
-                        if applicant.waitlist_Tulsi > self.waitlist_Tulsi:
-                            applicant.waitlist_Tulsi -= 1
-                        if applicant.waitlist_Type1 > self.waitlist_Type1:
-                            applicant.waitlist_Type1 -= 1
-                        applicant.save()
-            else:
-                self.waitlist_MRSB = 0
-                self.waitlist_Tulsi = 0
-                self.waitlist_Type1 = 0
             
-        super(Applicant, self).save()
+            if self.all_verified() and not (self.occupied_MRSB or self.occupied_Tulsi or self.occupied_Type1):
+                if flag:
+                    self.waitlist_Type1 = 1 + len(Applicant.objects.filter(
+                        occupied_Type1=False,
+                        marriage_certificate_verified=True,
+                        joint_photograph_with_spouse_verified=True,
+                        coursework_grade_sheet_verified=True,
+                        recommendation_of_guide_for_accomodation_verified=True,
+                    ))
+                    self.waitlist_Tulsi = 1 + len(Applicant.objects.filter(
+                        occupied_Tulsi=False,
+                        marriage_certificate_verified=True,
+                        joint_photograph_with_spouse_verified=True,
+                        coursework_grade_sheet_verified=True,
+                        recommendation_of_guide_for_accomodation_verified=True
+                    ))
+                    self.waitlist_MRSB = 1 + len(Applicant.objects.filter(
+                        occupied_MRSB=False,
+                        marriage_certificate_verified=True,
+                        joint_photograph_with_spouse_verified=True,
+                        coursework_grade_sheet_verified=True,
+                        recommendation_of_guide_for_accomodation_verified=True
+                    ))
+                else:
+                    logger.error("Came Here!!")
+                    pass
+
+            if self.all_verified() and (self.occupied_MRSB or self.occupied_Tulsi or self.occupied_Type1):
+                if self.occupied_Type1:
+                    for applicant in Applicant.objects.filter(marriage_certificate_verified=True,
+                                                              joint_photograph_with_spouse_verified=True,
+                                                              coursework_grade_sheet_verified=True,
+                                                              recommendation_of_guide_for_accomodation_verified=True,
+                                                              occupied_Type1=False):
+                        if applicant.name != self.name:
+                            if applicant.waitlist_Type1 > self.waitlist_Type1:
+                                applicant.waitlist_Type1 -= 1
+                                applicant.save(flag=False)
+                    self.waitlist_Type1 = 0
+                    # send confirmation email
+                elif self.occupied_Tulsi:
+                    for applicant in Applicant.objects.filter(marriage_certificate_verified=True,
+                                                              joint_photograph_with_spouse_verified=True,
+                                                              coursework_grade_sheet_verified=True,
+                                                              recommendation_of_guide_for_accomodation_verified=True,
+                                                              occupied_Tulsi=False):
+                        if applicant.name != self.name:
+                            if applicant.waitlist_Tulsi > self.waitlist_Tulsi:
+                                applicant.waitlist_Tulsi -= 1
+                                applicant.save(flag=False)
+                    self.waitlist_Tulsi = 0
+                    # send confirmation email
+                elif self.occupied_MRSB:
+                    for applicant in Applicant.objects.filter(marriage_certificate_verified=True,
+                                                              joint_photograph_with_spouse_verified=True,
+                                                              coursework_grade_sheet_verified=True,
+                                                              recommendation_of_guide_for_accomodation_verified=True,
+                                                              occupied_MRSB=False):
+                        if applicant.name != self.name:
+                            if applicant.waitlist_MRSB > self.waitlist_MRSB:
+                                applicant.waitlist_MRSB -= 1
+                                applicant.save(flag=False)
+                    self.waitlist_MRSB = 0
+                    # send confirmation email
+            # else:
+            #     self.waitlist_MRSB = 0
+            #     self.waitlist_Tulsi = 0
+            #     self.waitlist_Type1 = 0
+            
+        super(Applicant, self).save(*args, **kwargs)
