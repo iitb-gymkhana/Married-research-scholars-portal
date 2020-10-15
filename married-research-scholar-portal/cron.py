@@ -1,12 +1,10 @@
-from django_cron import CronJobBase, Schedule
+from portal.models import Applicant
 
+def my_scheduled_job():
+    print("LoL!")
+    pass
 
-class MyCronJob(CronJobBase):
-    RUN_EVERY_MINS = 1  # every 2 hours
-
-    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'my_app.my_cron_job'    # a unique code
-
-    def do(self):
-        print("yay!")
-        pass    # do your thing here
+def get_current_waitlist():
+    building_name = 'Tulsi'
+    # applicants = Applicant.objects.order_by('waitlist_' + building_name)
+    print(building_name)

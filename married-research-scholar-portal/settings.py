@@ -37,13 +37,17 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "widget_tweaks",
     "import_export",
-    "django_cron"
+    "django_crontab"
 ]
 
-CRON_CLASSES = [
-    'married-research-scholar-portal.cron.MyCronJob'
+# CRON_CLASSES = [
+#     'married-research-scholar-portal.cron.MyCronJob'
+# ]
+CRONJOBS = [
+    # ('5 * * * *', 'married-research-scholar-portal.cron.my_scheduled_job', '>> /tmp/scheduled_job.log'),
+    ('*/1 * * * *', 'married-research-scholar-portal.cron.get_current_waitlist', '>> ./cronjobs.log')
 ]
-
+CRONTAB_EXECUTABLE = '/usr/bin/crontab'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
