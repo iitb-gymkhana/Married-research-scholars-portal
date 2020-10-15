@@ -2,8 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 import logging
-from .forms import QueuerForm, ApplicantForm, OccupyingForm
+from .forms import QueuerForm, ApplicantForm, OccupyingForm, VacatingForm
 from .models import Queuer, Applicant
+from .utils import *
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +62,10 @@ def waitlist(request):
     waiting = {}
     feedback = ''
     all_verified = False
+    # print(get_waitlistType1())
+    # print(get_waitlistTulsi())
+    # print(get_waitlistMRSB())
+    # send_notifs()
     # for queue in queues:
     #     waiting["Type - 1"] = queue.waitlist_Type1
     #     waiting['Tulsi'] = queue.waitlist_Tulsi
@@ -75,6 +81,25 @@ def waitlist(request):
 @login_required
 def occupy(request):
     filter = 'Type-1'
+    _, eligible_Type1 = get_waitlistType1()
+    _, eligible_Tulsi = get_waitlistTulsi()
+    _, eligible_MRSB = get_waitlistMRSB()
+    applicants = Applicant.objects.filter(roll_number=request.user.username)
+    for applicant in applicants:
+        if applicant.name in eligible_Type1:
+            filter = 'Type-1'
+        elif applicant.name in eligible_Tulsi:
+            filter = 'Tulsi'
+        elif applicant.name in eligible_MRSB:
+            filter = 'MRSB'
+        else:
+            filter = 'Sorry'
+    now = datetime.datetime.now()
+    is_visible = False
+    if now.hour >= 9 and now.hour <= 17:
+        is_visible = True
+    else:
+        is_visible = False
     if request.method == "POST":
         POST = request.POST
         form = OccupyingForm(POST, request.FILES)
@@ -91,6 +116,31 @@ def occupy(request):
         form = OccupyingForm()
         logger.error("The form is not posting the data")
     return render(request, "portal/occupy.html", {"form": form, "filter": filter})
+
+@login_required
+def vacate(request):
+    applicants = Applicant.objects.filter(roll_number=request.user.username)
+    is_visible = False
+    logger.error(applicants)
+    for applicant in applicants:
+        is_visible = applicant.occupied_MRSB or applicant.occupied_Type1 or applicant.occupied_Tulsi
+    if request.method == 'POST':
+        POST = request.POST
+        form = VacatingForm(POST, request.FILES)
+        if form.is_valid():
+            # for person in Applicant.objects.filter():
+            applicants = Applicant.objects.filter(roll_number=request.user.username)
+            for applicant in applicants:
+                applicant.vacate = form.cleaned_data['vacate']
+                # applicant.save(flag=True)
+                applicant.delete()
+                pass
+            # form.save()
+            return redirect(reverse("portal:thanks"))
+    else:
+        form = VacatingForm()
+        logger.error("The form is not posting the data")
+    return render(request, "portal/vacate.html", {'form': form, 'is_visible': is_visible})
 
 @login_required
 def logout(request):

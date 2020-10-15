@@ -25,6 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Application definition
 INSTALLED_APPS = [
+    "django_crontab",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -37,7 +38,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "widget_tweaks",
     "import_export",
-    "django_crontab"
+    # "django_crontab"
 ]
 
 # CRON_CLASSES = [
@@ -47,7 +48,7 @@ CRONJOBS = [
     # ('5 * * * *', 'married-research-scholar-portal.cron.my_scheduled_job', '>> /tmp/scheduled_job.log'),
     ('*/1 * * * *', 'married-research-scholar-portal.cron.get_current_waitlist', '>> ./cronjobs.log')
 ]
-CRONTAB_EXECUTABLE = '/usr/bin/crontab'
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

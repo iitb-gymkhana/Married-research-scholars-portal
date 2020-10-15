@@ -6,6 +6,12 @@
 {% endblock %}
 
 {% block main %}
+{% if 'Sorry' in filter %}
+<div class="container p-3 my-3">
+    <h1>Sorry, not are not yet eligible to occupy!!</h1>
+</div>
+{% endif %}
+{% if not 'Sorry' in filter %}
 <div class="container-fluid p-3 my-3">
     <h1 style="color: black; margin-left: 30%; margin-right: auto">Occupy a building</h1>
 </div>
@@ -14,13 +20,14 @@
         {% csrf_token %}
         {% for field in form %}
         {% if filter in field.label  %}
-            <div class="form-check">
-                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-                {{ field }}
-            </div>
+        <div class="form-check">
+            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+            {{ field }}
+        </div>
         {% endif %}
         {% endfor %}
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
+{% endif %}
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block cssLinks %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+    integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+{% endblock %}
+
+{% block main %}
+{% load widget_tweaks %}
+{% if is_visible %}
+    <form action="" method="POST" , enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {{form.as_table}}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endif %}
+{% if not is_visible %}
+<div class="container p-3 my-3 justify-center">
+    <p class="text-center">You have no apartment to vacate</p>
+</div>
+{% endif %}
+{% endblock %}

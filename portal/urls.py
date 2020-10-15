@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import apply, portal, waitlist, occupy
+from .views import apply, portal, waitlist, occupy, vacate
 
 urlpatterns = [
     path("", portal, name="home"),
@@ -8,5 +8,6 @@ urlpatterns = [
     # waitlist and thanks have the same page.
     path("waitlist/", waitlist, name="waitlist"),
     path("thanks/", waitlist, name="thanks"),
-    path("occupy/", occupy, name='occupy')
+    path("occupy/", occupy, name='occupy'),
+    path("vacate/", vacate, name='vacate')
 ]

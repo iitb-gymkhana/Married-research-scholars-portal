@@ -236,7 +236,7 @@ class Applicant(models.Model):
     joint_photograph_with_spouse_verified = models.BooleanField(default=False, null=False)
     coursework_grade_sheet_verified = models.BooleanField(default=False, null=False)
     recommendation_of_guide_for_accomodation_verified = models.BooleanField(default=False, null=False)
-    feedback = models.TextField(default='Verified!', null=True, blank=True)
+    feedback = models.TextField(default='Your Documents are not yet verified!', null=True, blank=True)
     waitlist_Type1 = models.IntegerField(default='0', db_index=True, editable=False)
     waitlist_Tulsi = models.IntegerField(default=0, db_index=True, editable=False)
     waitlist_MRSB = models.IntegerField(default=0, db_index=True, editable=False)
@@ -246,6 +246,8 @@ class Applicant(models.Model):
     occupied_Type1 = models.BooleanField(default=False)
     occupied_Tulsi = models.BooleanField(default=False)
     occupied_MRSB = models.BooleanField(default=False)
+    # notif_sent = models.BooleanField(default=False)
+    vacate = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Applicant'
@@ -350,7 +352,7 @@ class Applicant(models.Model):
                     logger.error("Came Here!!")
                     pass
 
-            if self.all_verified() and (self.occupied_MRSB or self.occupied_Tulsi or self.occupied_Type1):
+            elif self.all_verified() and (self.occupied_MRSB or self.occupied_Tulsi or self.occupied_Type1):
                 if self.occupied_Type1:
                     for applicant in Applicant.objects.filter(marriage_certificate_verified=True,
                                                               joint_photograph_with_spouse_verified=True,

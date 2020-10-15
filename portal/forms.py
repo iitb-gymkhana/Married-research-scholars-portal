@@ -22,7 +22,8 @@ class ApplicantForm(forms.ModelForm):
             'verified_time',
             'occupied_Type1',
             'occupied_Tulsi',
-            'occupied_MRSB'
+            'occupied_MRSB',
+            'vacate'
         )
         widgets = {
             'date_of_marriage' : forms.SelectDateWidget,
@@ -32,7 +33,7 @@ class ApplicantForm(forms.ModelForm):
         }
 
 class OccupyingForm(forms.ModelForm):
-    """Form Definition for Undertaking"""
+    """Form Definition for Occupying"""
     def __init__(self, *args, **kwargs):
         super(OccupyingForm, self).__init__(*args, **kwargs)
 
@@ -49,6 +50,19 @@ class OccupyingForm(forms.ModelForm):
             "occupied_Tulsi": "Occupy Tulsi",
             "occupied_MRSB": "Occupy MRSB"
         }
+
+
+class VacatingForm(forms.ModelForm):
+    """Form definition for Vacating"""
+    def __init__(self, *args, **kwargs):
+        super(VacatingForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Applicant
+        exclude = '__all__'
+        fields = (
+            'vacate',
+        )
 class QueuerForm(forms.ModelForm):
     """Form definition for Queuer."""
 
