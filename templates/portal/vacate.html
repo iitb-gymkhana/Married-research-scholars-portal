@@ -10,8 +10,12 @@
 {% if is_visible %}
     <form action="" method="POST" , enctype="multipart/form-data" novalidate>
         {% csrf_token %}
-        {{form.as_table}}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        {{form.as_p}}
+        <div style="text-align: center;" class="container p-3 my-3">
+      <div style="text-align: center;" class="container p-3 my-3">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    </div>
     </form>
 {% endif %}
 {% if not is_visible %}

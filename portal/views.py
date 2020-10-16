@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 import logging
-from .forms import QueuerForm, ApplicantForm, OccupyingForm, VacatingForm
-from .models import Queuer, Applicant
+from .forms import ApplicantForm, OccupyingForm, VacatingForm
+from .models import Applicant
 from .utils import *
 import datetime
 
@@ -131,9 +131,9 @@ def vacate(request):
             # for person in Applicant.objects.filter():
             applicants = Applicant.objects.filter(roll_number=request.user.username)
             for applicant in applicants:
-                applicant.vacate = form.cleaned_data['vacate']
+                if form.cleaned_data['vacate']:
                 # applicant.save(flag=True)
-                applicant.delete()
+                    applicant.delete()
                 pass
             # form.save()
             return redirect(reverse("portal:thanks"))

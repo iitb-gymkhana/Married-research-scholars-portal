@@ -9,11 +9,13 @@
 <div class="container-fluid p-3 my-3">
   <h1 style="color: black; margin-left: 30%; margin-right: auto">Application for Family Accomodation</h1>
 </div>
-<div class="application container">
+<div class="container">
   <form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     {% include 'form.html' with form=form %}
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div style="text-align: center;" class="container p-3 my-3">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
   </form>
 </div>
 {% endblock %}

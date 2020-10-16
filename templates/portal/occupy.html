@@ -11,7 +11,12 @@
     <h1>Sorry, not are not yet eligible to occupy!!</h1>
 </div>
 {% endif %}
-{% if not 'Sorry' in filter %}
+{% if not 'Sorry' in filter and not is_visible %}
+<div class="container-fluid p-3 my-3">
+<h1>You cannot occupy now. Come back later during office hours</h1>
+</div>
+{% endif %}
+{% if not 'Sorry' in filter  and is_visible %}
 <div class="container-fluid p-3 my-3">
     <h1 style="color: black; margin-left: 30%; margin-right: auto">Occupy a building</h1>
 </div>
@@ -26,7 +31,9 @@
         </div>
         {% endif %}
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div style="text-align: center;" class="container p-3 my-3">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
     </form>
 </div>
 {% endif %}
