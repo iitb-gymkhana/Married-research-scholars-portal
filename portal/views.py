@@ -19,31 +19,13 @@ def apply(request):
     filter = ['spouse_name', 'spouse_roll_number', 'spouse_designation']
     if request.method == "POST":
         POST = request.POST
-        # POST = request.POST.copy()
-        # POST['roll_number'] = request.user.username
-        # POST['name'] = request.user.first_name + request.user.last_name
-        # POST['email'] = request.user.email
-        # form = QueuerForm(POST, request.FILES)
         form = ApplicantForm(POST, request.FILES)
         # TODO: can't sent in POST requests when fields are disabled,.
 
         if form.is_valid():
             form.save()
-            # applicant = Applicant.objects.filter(roll_number=form.cleaned_data['roll_number'])
-            # print(applicant)
-            # applicant.spouse_name = form2.cleaned_data['spouse_name']
-            # applicant.spouse_roll_number = form2.cleaned_data['spouse_roll_number']
-            # applicant.spouse_designation = form2.cleaned_data['spouse_designation']
-            # applicant.save()
             return redirect(reverse("portal:thanks"))
     else:
-        # form = QueuerForm(
-        #     initial={
-        #         "name": request.user.first_name + " " + request.user.last_name,
-        #         "roll_number": request.user.username,
-        #         "email": request.user.email,
-        #     }
-        # )
         form = ApplicantForm(
             initial={
                 'name': request.user.first_name + ' ' + request.user.last_name,
@@ -57,19 +39,10 @@ def apply(request):
 @login_required
 def waitlist(request):
     user_roll_number = request.user.username
-    queues = Queuer.objects.filter(roll_number=user_roll_number)
     applicants = Applicant.objects.filter(roll_number=user_roll_number)
     waiting = {}
     feedback = ''
     all_verified = False
-    # print(get_waitlistType1())
-    # print(get_waitlistTulsi())
-    # print(get_waitlistMRSB())
-    # send_notifs()
-    # for queue in queues:
-    #     waiting["Type - 1"] = queue.waitlist_Type1
-    #     waiting['Tulsi'] = queue.waitlist_Tulsi
-    #     waiting['MRSB'] = queue.waitlist_MRSB
     for applicant in applicants:
         waiting['Type - 1'] = applicant.waitlist_Type1
         waiting['Tulsi'] = applicant.waitlist_Tulsi
@@ -97,6 +70,7 @@ def occupy(request):
     now = datetime.datetime.now()
     is_visible = False
     if now.hour >= 9 and now.hour <= 17:
+        print('here')
         is_visible = True
     else:
         is_visible = False
@@ -115,7 +89,7 @@ def occupy(request):
     else:
         form = OccupyingForm()
         logger.error("The form is not posting the data")
-    return render(request, "portal/occupy.html", {"form": form, "filter": filter})
+    return render(request, "portal/occupy.html", {"form": form, "filter": filter, "is_visible": is_visible})
 
 @login_required
 def vacate(request):

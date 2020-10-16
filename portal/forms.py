@@ -24,6 +24,9 @@ class ApplicantForm(forms.ModelForm):
             'occupied_Type1',
             'occupied_Tulsi',
             'occupied_MRSB',
+            'defer_Type1',
+            'defer_Tulsi',
+            'defer_MRSB'
         )
         widgets = {
             'date_of_marriage' : forms.SelectDateWidget,
@@ -43,53 +46,21 @@ class OccupyingForm(forms.ModelForm):
         fields = (
             'occupied_Type1',
             'occupied_Tulsi',
-            'occupied_MRSB'
+            'occupied_MRSB',
+            'defer_Type1',
+            'defer_Tulsi',
+            'defer_MRSB'
         )
         labels = {
             "occupied_Type1": "Occupy Type-1",
             "occupied_Tulsi": "Occupy Tulsi",
-            "occupied_MRSB": "Occupy MRSB"
+            "occupied_MRSB": "Occupy MRSB",
+            "defer_Tulsi": "Don't want Type-1",
+            "defer_Type1": "Don't want Tulsi",
+            "defer_MRSB": "Don't want MRSB"
         }
 
 
 class VacatingForm(forms.Form):
     """Form definition for Vacating"""
     vacate = forms.BooleanField(label="Vacate your apartment",required=True)
-
-# class QueuerForm(forms.ModelForm):
-#     """Form definition for Queuer."""
-
-#     def __init__(self, *args, **kwargs):
-#         super(QueuerForm, self).__init__(*args, **kwargs)
-#         # self.fields['roll_number'].disabled = True
-#         # self.fields['name'].disabled = True
-#         # self.fields['email'].disabled = True
-
-#     class Meta:
-#         model = Queuer
-#         fields = (
-#             # "building_applied",
-#             "name",
-#             "email",
-#             "roll_number",
-#             "contact_number",
-#             "spouse_name",
-#             # "dependant",
-#             "marriage_certificate",
-#             "your_aadhaar_card",
-#             "spouse_aadhaar_card",
-#         )
-
-#     dependant = forms.ModelChoiceField(Dependant.objects.all())
-
-
-# class QueuerAdminForm(forms.ModelForm):
-#     """Form definition for Queuer on admin page"""
-
-#     class Meta:
-#         model = Queuer
-#         fields = "__all__"
-#         exclude = ("waitlist_Type1","waitlist_Tulsi", "waitlist_MRSB")
-
-# # class UndertakingForm(forms.Form):
-# #
