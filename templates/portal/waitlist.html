@@ -1,28 +1,21 @@
 {% extends 'index.html' %}
+{% block cssLinks %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+    integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+{% endblock %}
+
 
 {% block main %}
+<div class="container p-3 my-3" style="border: 2px solid black">
+    <h3>Feedback</h3>
     {% if not all_verified %}
-        <div class="container p-3 my-3">
     <strong><b style="color: black">{{ feedback }}</b></strong>
-    </div>
     {% endif %}
     {% if all_verified %}
-        <div class="container p-3 my-3">
     <strong><b style="color: black">Verified!!</b></strong>
-    </div>
     {% endif %}
-<div class="container">
-  if documents not verified, please visit HCU office for document verification within 14 days, else your application
-  will
-  be deleted.<br><br>
-  Documents to bring:
-  <ul style="margin: 0;">
-    <li> Marriage certificate </li>
-    <li> Joint photograph with your spouse (PostCard Size) </li>
-    <li> Course work grade sheet </li>
-    <li> Recommendation of guide for accomodation </li>
-  </ul>
-  <br><br>
+</div>
+<div class="container p-3 my-3">
   {% if all_verified %}
       Current waitlist number for your applications:
   <br>

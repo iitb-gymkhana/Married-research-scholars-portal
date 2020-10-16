@@ -11,14 +11,21 @@
   }
 </style>
     <!-- CSS only -->
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+    integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 {% endblock %}
 {% block main %}
 <div class="container p-3 my-3">
-  <h2>Homepage</h2>
-  <p>Hello {{user.first_name}}  {{ user.last_name }}
+  <h2>Hello {{user.first_name}}  {{ user.last_name }}
     <!-- from {{ user.userprofile.hostel_name }} -->
-    ! </p>
+    ! </h2>
+  Documents to have:
+  <ol>
+    <li> Marriage certificate </li>
+    <li> Joint photograph with your spouse (PostCard Size) </li>
+    <li> Course work grade sheet </li>
+    <li> Recommendation of guide for accomodation </li>
+  </ol>
   <a href="{% url 'portal:apply' %}"><button class="btn btn-info"> Apply for a building </button></a>
   <a href="{% url 'portal:thanks' %}"><button class="btn btn-info"> Waitlist </button></a>
   <a href="{% url 'portal:occupy' %}"><button class="btn btn-info"> Occupy </button></a>
