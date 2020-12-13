@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.forms.models import inlineformset_factory
 import logging
 from .forms import ApplicantForm, OccupyingForm, VacatingForm
 from .models import Applicant
@@ -17,11 +18,11 @@ def portal(request):
 @login_required
 def apply(request):
     filter = ['spouse_name', 'spouse_roll_number', 'spouse_designation']
+    filled = False
     if request.method == "POST":
         POST = request.POST
         form = ApplicantForm(POST, request.FILES)
         # TODO: can't sent in POST requests when fields are disabled,.
-
         if form.is_valid():
             form.save()
             return redirect(reverse("portal:thanks"))
@@ -33,7 +34,12 @@ def apply(request):
                 'email': request.user.email
             }
         )
-    return render(request, "portal/apply.html", {"form": form, 'filter': filter})
+        found = Applicant.objects.filter(roll_number=request.user.username)
+        logger.error(len(found))
+        logger.error(request.user.username)
+        if len(found) >= 1:
+            filled = True
+    return render(request, "portal/apply.html", {"form": form, 'filter': filter, "filled": filled})
 
 
 @login_required
@@ -69,7 +75,7 @@ def occupy(request):
             filter = 'Sorry'
     now = datetime.datetime.now()
     is_visible = False
-    if now.hour >= 9 and now.hour <= 17:
+    if now.hour >= 9 and now.hour <= 24:
         print('here')
         is_visible = True
     else:
@@ -115,6 +121,11 @@ def vacate(request):
         form = VacatingForm()
         logger.error("The form is not posting the data")
     return render(request, "portal/vacate.html", {'form': form, 'is_visible': is_visible})
+
+@login_required
+def thanks(request):
+    """Thank You Page"""
+    return render(request, "portal/thanks.html")
 
 @login_required
 def logout(request):

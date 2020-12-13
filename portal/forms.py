@@ -26,13 +26,17 @@ class ApplicantForm(forms.ModelForm):
             'occupied_MRSB',
             'defer_Type1',
             'defer_Tulsi',
-            'defer_MRSB'
+            'defer_MRSB',
+            'acad_details_verification_date',
+            'application_received_by_hcu_date',
+            'acad_details_verified'
         )
         widgets = {
             'date_of_marriage' : forms.SelectDateWidget,
             'date_of_registration' : forms.SelectDateWidget,
             'date_of_scholarship' : forms.SelectDateWidget,
-            'course_work_completed_on' : forms.SelectDateWidget
+            'course_work_completed_on' : forms.SelectDateWidget,
+            'scholarship_awarded_upto' : forms.SelectDateWidget
         }
 
 class OccupyingForm(forms.ModelForm):
@@ -64,3 +68,4 @@ class OccupyingForm(forms.ModelForm):
 class VacatingForm(forms.Form):
     """Form definition for Vacating"""
     vacate = forms.BooleanField(label="Vacate your apartment",required=True)
+

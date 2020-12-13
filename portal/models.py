@@ -10,8 +10,8 @@ class Applicant(models.Model):
     name = models.CharField(max_length=128)
     roll_number = models.CharField(max_length=128)
     date_of_registration = models.DateField(null=False)
-    department = models.CharField(max_length=128, help_text="For example, 'Energy Science and Engineering'", null=False)
-    date_of_marriage = models.DateField(null=True, default='', blank=False)
+    department = models.CharField(max_length=128, help_text="For example, 'Electrical Engineering'", null=False)
+    # date_of_marriage = models.DateField(null=True, default='', blank=False)
     email = models.EmailField(max_length=256)
     phone_number = PhoneNumberField(default='')
     permanent_address = models.TextField(default='', null=False)
@@ -19,8 +19,8 @@ class Applicant(models.Model):
         ('I', 'Institute'),
         ('CSIR', 'CSIR'),
         ('UGC', 'UGC')
-    ], null=True)
-    date_of_scholarship = models.DateField(null=True, default='')
+    ], null=True, verbose_name="Scholarship: Institute / CSIR / UGC")
+    date_of_scholarship = models.DateField(null=True, default='', verbose_name="Date from which scholarship is awarded")
     course_work_completed_on = models.DateField(null=True, default='', help_text='Give the expected date')
     course_work_completed_by = models.CharField(max_length=128)
     marriage_certificate = models.FileField(upload_to='marriage_certificates/', null=True, blank=False)
@@ -39,14 +39,18 @@ class Applicant(models.Model):
     waitlist_Type1 = models.IntegerField(default='0', db_index=True, editable=False)
     waitlist_Tulsi = models.IntegerField(default=0, db_index=True, editable=False)
     waitlist_MRSB = models.IntegerField(default=0, db_index=True, editable=False)
-    date_applied = models.DateTimeField(null=False, default=timezone.now, editable=False)
-    verified_time = models.DateTimeField(null=True, blank=True)
+    date_applied = models.DateTimeField(null=False, default=timezone.now, editable=False, verbose_name="Date Applied")
+    verified_time = models.DateTimeField(null=True, blank=True, verbose_name="Date of verification by HCU")
     occupied_Type1 = models.BooleanField(default=False)
     occupied_Tulsi = models.BooleanField(default=False)
     occupied_MRSB = models.BooleanField(default=False)
     defer_Type1 = models.BooleanField(default=False)
     defer_Tulsi = models.BooleanField(default=False)
     defer_MRSB = models.BooleanField(default=False)
+    scholarship_awarded_upto = models.DateField(verbose_name="Initially the scholarship awarded up to", null=True, default='')
+    acad_details_verified = models.BooleanField(default=False, verbose_name="The academic details are verified and found correct")
+    acad_details_verification_date = models.DateTimeField(default=timezone.now, verbose_name="Verification Date by Academic Section", null=True)
+    application_received_by_hcu_date = models.DateTimeField(default=timezone.now, verbose_name="Application Received by H.C.Unit Date:", null=True)
 
     class Meta:
         verbose_name = 'Applicant'
@@ -69,6 +73,7 @@ class Applicant(models.Model):
             if not self.date_applied:
                 self.date_applied = timezone.now()
         else:
+            self.application_received_by_hcu_date = self.acad_details_verification_date
             if not self.verified_time:
                 if self.all_verified():
                     self.verified_time = timezone.now()
@@ -150,3 +155,15 @@ class Applicant(models.Model):
             #     self.waitlist_Type1 = 0
             
         super(Applicant, self).save(*args, **kwargs)
+
+# class Documents(models.Model):
+#     applicant = models.OneToOneField(Applicant, on_delete=models.CASCADE, primary_key=True)
+
+#     spouse_name = models.CharField(max_length=128, null=True, blank=False, default='Spouse')
+#     spouse_roll_number = models.CharField(max_length=128, null=True, blank=False, default='N/A')
+#     spouse_designation = models.CharField(max_length=128, null=True, blank=False, default='N/A')
+#     date_of_marriage = models.DateField(null=True, default='', blank=False)
+#     marriage_certificate = models.FileField(upload_to='marriage_certificates/', null=True, blank=False)
+#     joint_photograph_with_spouse = models.FileField(upload_to='photo_with_spouse/', null=True, blank=False)
+#     coursework_grade_sheet = models.FileField(upload_to='grade_sheet/', null=True, blank=False)
+#     recommendation_of_guide_for_accomodation = models.FileField(upload_to='guide_recommendation/', null=True, blank=False)

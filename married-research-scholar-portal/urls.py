@@ -18,6 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
+from portal.admin import hcu_admin_site, acad_admin_site
 
 import oauth.urls
 import portal.urls
@@ -27,4 +28,6 @@ urlpatterns = [
     path("oauth/", include((oauth.urls, "oauth"), namespace="oauth")),
     path("portal/", include((portal.urls, "portal"), namespace="portal")),
     path("admin/", admin.site.urls),
+    path("hcu/", hcu_admin_site.urls),
+    path("acad/", acad_admin_site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

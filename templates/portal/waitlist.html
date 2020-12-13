@@ -7,7 +7,7 @@
 
 {% block main %}
 <div class="container p-3 my-3" style="border: 2px solid black">
-    <h3>Feedback</h3>
+    <h3>Status</h3>
     {% if not all_verified %}
     <strong><b style="color: black">{{ feedback }}</b></strong>
     {% endif %}
@@ -29,6 +29,6 @@
       Your waitlist number is N/A, this is because atleast one of your documents is not verified.
   {% endif %}
   <br><br>
-  Building is allotted based considering verification - first come first serve.
+  Building is allotted based on considering verification - first come first serve.
 </div>
 {% endblock %}
