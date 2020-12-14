@@ -89,7 +89,7 @@ class HCUAdmin(ExportMixin, admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(HCUAdmin, self).get_queryset(request)
         
-        return qs.filter(acad_details_verified=True)
+        return qs.filter(acad_details_verified=True).order_by('date_applied')
 
     def get_export_formats(self):
         formats = (

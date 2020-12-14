@@ -1,5 +1,6 @@
 from django import forms
 from .models import Applicant
+from django.contrib.admin import widgets
 class ApplicantForm(forms.ModelForm):
     """Form Definition for Applicant"""
     def __init__(self, *args, **kwargs):
@@ -29,14 +30,14 @@ class ApplicantForm(forms.ModelForm):
             'defer_MRSB',
             'acad_details_verification_date',
             'application_received_by_hcu_date',
-            'acad_details_verified'
+            'acad_details_verified',
+            'scholarship_awarded_upto'
         )
         widgets = {
             'date_of_marriage' : forms.SelectDateWidget,
-            'date_of_registration' : forms.SelectDateWidget,
-            'date_of_scholarship' : forms.SelectDateWidget,
-            'course_work_completed_on' : forms.SelectDateWidget,
-            'scholarship_awarded_upto' : forms.SelectDateWidget
+            'date_of_registration': forms.SelectDateWidget,
+            'date_of_scholarship': forms.SelectDateWidget,
+            'course_work_completed_on': forms.SelectDateWidget,
         }
 
 class OccupyingForm(forms.ModelForm):

@@ -112,8 +112,8 @@ def vacate(request):
             applicants = Applicant.objects.filter(roll_number=request.user.username)
             for applicant in applicants:
                 if form.cleaned_data['vacate']:
-                # applicant.save(flag=True)
-                    applicant.delete()
+                    applicant.save(flag=False)
+                    
                 pass
             # form.save()
             return redirect(reverse("portal:thanks"))
