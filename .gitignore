@@ -159,8 +159,8 @@ crashlytics.properties
 crashlytics-build.properties
 
 ## Custom
-db.sqlite3
-db.sqlite3-journal
+# db.sqlite3
+# db.sqlite3-journal
 
 media/*
 logs/*

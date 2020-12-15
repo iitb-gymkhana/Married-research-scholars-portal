@@ -1,6 +1,7 @@
 {% load widget_tweaks %}
 
-{% for hidden_field in form.hidden_fields %}
+<div class="container">
+    {% for hidden_field in form.hidden_fields %}
 {{ hidden_field }}
 {% endfor %}
 
@@ -12,10 +13,12 @@
 </div>
 {% endif %}
 
-{% for field in form.visible_fields %}
-<div class="form-group">
-  {{ field.label_tag }}
 
+<div class="container p-3 my-3">
+    {% for field in form.visible_fields %}
+        {% if not field.name in filter%}
+            <div class="form-group">
+  <div class="" style="width: available">{{ field.label_tag }}</div>
   {% if form.is_bound %}
   {% if field.errors %}
   {% render_field field class="form-control is-invalid" %}
@@ -35,4 +38,22 @@
   <small class="form-text text-muted">{{ field.help_text }}</small>
   {% endif %}
 </div>
+        {% endif %}
+
 {% endfor %}
+</div>
+<div class="container">
+  <h1 class="text-center">Undertaking</h1>
+  <ul class="list-group">
+    <li class="list-group-item">a) I shall immediately vacate the family accommodation on expiry of my student ship or
+      terminate my student ship by authorities for any reason.</li>
+    <li class="list-group-item">b) I shall stay in the family accommodation allotted to me with my spouse and child /
+      children only. </li>
+    <li class="list-group-item">c) I declare that my spouse, Mrs/Mr. {{ form.spouse_name }} is working/studying in IITB
+      and has not applied for /allotted any accommodation by the Institute<br>
+      Note that a false declaration shall permanently disqualify the applicant for allotment. Mention Roll No:
+      {{ form.spouse_roll_number }} and
+      Designation: {{ form.spouse_designation }} of the spouse in case he/she is a student/employee.</li>
+  </ul>
+</div>
+</div>

@@ -25,6 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Application definition
 INSTALLED_APPS = [
+    "django_crontab",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -37,7 +38,18 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "widget_tweaks",
     "import_export",
+    # "django_crontab"
 ]
+
+# CRON_CLASSES = [
+#     'married-research-scholar-portal.cron.MyCronJob'
+# ]
+CRONJOBS = [
+    # ('5 * * * *', 'married-research-scholar-portal.cron.my_scheduled_job', '>> /tmp/scheduled_job.log'),
+    ('*/1 * */2 * *', 'portal.utils.send_notifs_to_students', '>> cronjobs.log'),
+    ('0 6 * * *', 'portal.utils.send_notifs_to_ARHCU', '>> notifs.log')
+]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -75,6 +87,14 @@ TEMPLATES = [
 WSGI_APPLICATION = "married-research-scholar-portal.wsgi.application"
 
 
+# BROKER_URL = "amqp://"
+# CELERY_ACCEPT_CONTENT = ['pickle']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_REQUEST_SERIALIZER = 'json'
+
+# CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -109,7 +129,7 @@ PHONENUMBER_DEFAULT_REGION = "IN"
 
 USE_I18N = True
 
-USE_L10N = True
+# USE_L10N = True
 
 USE_TZ = True
 
@@ -132,3 +152,7 @@ LOGOUT_URL = "oauth:logout"
 LOGIN_REDIRECT_URL = "home"
 
 AUTH_PROFILE_MODULE = "core.UserProfile"
+
+DATE_INPUT_FORMATS = [
+    '%Y-%m-%d'
+]

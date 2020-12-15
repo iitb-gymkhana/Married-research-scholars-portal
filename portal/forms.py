@@ -1,36 +1,76 @@
 from django import forms
+from .models import Applicant
+from django.contrib.admin import widgets
 
-from .models import Queuer
 
-
-class QueuerForm(forms.ModelForm):
-    """Form definition for Queuer."""
-
+class DateInput(forms.DateInput):
+    input_type = 'date'
+class ApplicantForm(forms.ModelForm):
+    """Form Definition for Applicant"""
     def __init__(self, *args, **kwargs):
-        super(QueuerForm, self).__init__(*args, **kwargs)
-        # self.fields['roll_number'].disabled = True
-        # self.fields['name'].disabled = True
-        # self.fields['email'].disabled = True
+        super(ApplicantForm, self).__init__(*args, **kwargs)
+        for key in self.fields:
+            self.fields[key].required = True
 
     class Meta:
-        model = Queuer
-        fields = (
-            "building_applied",
-            "name",
-            "email",
-            "roll_number",
-            "contact_number",
-            "spouse_name",
-            "marriage_certificate",
-            "your_aadhaar_card",
-            "spouse_aadhaar_card",
+        model = Applicant
+        fields = '__all__'
+        exclude = (
+            'marriage_certificate_verified',
+            'joint_photograph_with_spouse_verified',
+            'coursework_grade_sheet_verified',
+            'recommendation_of_guide_for_accomodation_verified',
+            'feedback',
+            'waitlist_Type1',
+            'waitlist_Tulsi',
+            'waitlist_MRSB',
+            'date_applied',
+            'verified_time',
+            'occupied_Type1',
+            'occupied_Tulsi',
+            'occupied_MRSB',
+            'defer_Type1',
+            'defer_Tulsi',
+            'defer_MRSB',
+            'acad_details_verification_date',
+            'application_received_by_hcu_date',
+            'acad_details_verified',
+            'scholarship_awarded_upto'
         )
+        widgets = {
+            # 'date_of_marriage' : DateInput(format=(r"%Y-%m-%d")), #forms.SelectDateWidget,
+            'date_of_registration': DateInput(format=("%YYYY-%MM-%DD")),  # forms.SelectDateWidget,
+            'date_of_scholarship': DateInput(format=("%YYYY-%MM-%DD")),  # forms.SelectDateWidget,
+            'course_work_completed_on': DateInput(format=("%YYYY-%MM-%DD")),  # forms.SelectDateWidget,
+        }
 
-
-class QueuerAdminForm(forms.ModelForm):
-    """Form definition for Queuer on admin page"""
+class OccupyingForm(forms.ModelForm):
+    """Form Definition for Occupying"""
+    def __init__(self, *args, **kwargs):
+        super(OccupyingForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model = Queuer
-        fields = "__all__"
-        exclude = ("waitlist_number",)
+        model = Applicant
+        exclude = '__all__'
+        fields = (
+            'occupied_Type1',
+            'occupied_Tulsi',
+            'occupied_MRSB',
+            'defer_Type1',
+            'defer_Tulsi',
+            'defer_MRSB'
+        )
+        labels = {
+            "occupied_Type1": "Occupy Type-1",
+            "occupied_Tulsi": "Occupy Tulsi",
+            "occupied_MRSB": "Occupy MRSB",
+            "defer_Tulsi": "Don't want Type-1",
+            "defer_Type1": "Don't want Tulsi",
+            "defer_MRSB": "Don't want MRSB"
+        }
+
+
+class VacatingForm(forms.Form):
+    """Form definition for Vacating"""
+    vacate = forms.BooleanField(label="Vacate your apartment",required=True)
+
