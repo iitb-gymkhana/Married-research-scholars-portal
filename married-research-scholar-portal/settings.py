@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 # ]
 CRONJOBS = [
     # ('5 * * * *', 'married-research-scholar-portal.cron.my_scheduled_job', '>> /tmp/scheduled_job.log'),
-    ('*/1 * * * *', 'portal.utils.send_notifs_to_students', '>> cronjobs.log'),
+    ('*/1 * */2 * *', 'portal.utils.send_notifs_to_students', '>> cronjobs.log'),
     ('0 6 * * *', 'portal.utils.send_notifs_to_ARHCU', '>> notifs.log')
 ]
 
