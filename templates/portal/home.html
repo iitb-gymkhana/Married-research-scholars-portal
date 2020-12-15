@@ -15,7 +15,8 @@
     integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 {% endblock %}
 {% block main %}
-<div class="container p-3 my-3">
+<section class="jumbotron text-center" style="background-color: white;">
+  <div class="container">
   <h2>Hello {{user.first_name}}  {{ user.last_name }}
     <!-- from {{ user.userprofile.hostel_name }} -->
     ! </h2>
@@ -26,9 +27,16 @@
     <li> Course work grade sheet </li>
     <li> Recommendation of guide for accomodation </li>
   </ol>
-  <a href="{% url 'portal:apply' %}"><button class="btn btn-info"> Apply for a building </button></a>
-  <a href="{% url 'portal:waitlist' %}"><button class="btn btn-info"> Waitlist </button></a>
-  <a href="{% url 'portal:occupy' %}"><button class="btn btn-info"> Occupy </button></a>
-  <a href="{% url 'portal:vacate' %}"><button class="btn btn-info"> Vacate </button></a>
+  <h2><b>Note</b>: If you clear the waitlist for a building, it is compulsory for you to mark your choice on this portal, i.e. either occupy or not occupy. Otherwise your application will be deleted and you have to apply again. </h2>
+  <h3><b>Note</b>: You can only fill the form once, so fill it carefully!</h3>
+  <div class='container text-center'>
+    <p class="text-center">
+      <a href="{% url 'portal:apply' %}"><button class="btn btn-info"> Apply for a building </button></a>
+      <a href="{% url 'portal:waitlist' %}"><button class="btn btn-info"> Waitlist </button></a>
+      <a href="{% url 'portal:occupy' %}"><button class="btn btn-info"> Occupy </button></a>
+      <a href="{% url 'portal:vacate' %}"><button class="btn btn-info"> Vacate </button></a>
+    </p>
+  </div>
 </div>
+</section>
 {% endblock %}

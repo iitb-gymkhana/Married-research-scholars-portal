@@ -49,13 +49,18 @@ def waitlist(request):
     waiting = {}
     feedback = ''
     all_verified = False
+    status = ''
     for applicant in applicants:
         waiting['Type - 1'] = applicant.waitlist_Type1
         waiting['Tulsi'] = applicant.waitlist_Tulsi
         waiting['MRSB'] = applicant.waitlist_MRSB
         feedback = applicant.feedback
         all_verified = applicant.all_verified()
-    return render(request, "portal/waitlist.html", {"waitlist": waiting, "feedback": feedback, "all_verified": all_verified})
+        if applicant.acad_details_verified:
+            status = "Your application has successfully reached the HCU office."
+        else:
+            status = "Your application is with the Academic Office."
+    return render(request, "portal/waitlist.html", {"waitlist": waiting, "feedback": feedback, "all_verified": all_verified, "status": status})
 
 @login_required
 def occupy(request):

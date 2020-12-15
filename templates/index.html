@@ -29,7 +29,7 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}" />
   <style>
     body {
-      color: #5e5e5e;
+      {% comment %} color: #5e5e5e; {% endcomment %}
       display: flex;
       flex-direction: column;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -89,7 +89,7 @@
 <body>
 
   <!-- Fixed navbar -->
-  <nav id="my-nav" class="bg-light">
+  <nav id="my-nav" class="navbar-light" style="background-color: #e3f2fd;">
     <h1>
       <a href="{% url 'portal:home' %}"> {{ SITE_TITLE }} </a>
 

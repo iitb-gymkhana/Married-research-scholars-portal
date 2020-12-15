@@ -48,10 +48,10 @@ class Applicant(models.Model):
     defer_Type1 = models.BooleanField(default=False)
     defer_Tulsi = models.BooleanField(default=False)
     defer_MRSB = models.BooleanField(default=False)
-    scholarship_awarded_upto = models.DateField(verbose_name="Initially the scholarship awarded up to", null=True, default='')
+    scholarship_awarded_upto = models.DateField(verbose_name="Initially the scholarship awarded up to", null=True, blank=True)
     acad_details_verified = models.BooleanField(default=False, verbose_name="The academic details are verified and found correct")
     acad_details_verification_date = models.DateTimeField(default=timezone.now, verbose_name="Verification Date by Academic Section", null=True)
-    application_received_by_hcu_date = models.DateTimeField(default=timezone.now, verbose_name="Application Received by H.C.Unit Date:", null=True)
+    application_received_by_hcu_date = models.DateTimeField(verbose_name="Application Received by H.C.Unit Date:", null=True, blank=True)
 
     class Meta:
         verbose_name = 'Applicant'
@@ -139,11 +139,11 @@ class Applicant(models.Model):
                         pass
                     elif not self.occupied_any() and self.deferred_any():
                         if self.defer_Type1:
-                            self.waitlist_Type1 = 0
+                            self.waitlist_Type1 = -2
                         elif self.defer_Tulsi:
-                            self.waitlist_Tulsi = 0
+                            self.waitlist_Tulsi = -2
                         elif self.defer_MRSB:
-                            self.waitlist_MRSB = 0
+                            self.waitlist_MRSB = -2
                     else:
                         pass
                 else:

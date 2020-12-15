@@ -1,6 +1,10 @@
 from django import forms
 from .models import Applicant
 from django.contrib.admin import widgets
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
 class ApplicantForm(forms.ModelForm):
     """Form Definition for Applicant"""
     def __init__(self, *args, **kwargs):
@@ -34,10 +38,10 @@ class ApplicantForm(forms.ModelForm):
             'scholarship_awarded_upto'
         )
         widgets = {
-            'date_of_marriage' : forms.SelectDateWidget,
-            'date_of_registration': forms.SelectDateWidget,
-            'date_of_scholarship': forms.SelectDateWidget,
-            'course_work_completed_on': forms.SelectDateWidget,
+            # 'date_of_marriage' : DateInput(format=(r"%Y-%m-%d")), #forms.SelectDateWidget,
+            'date_of_registration': DateInput(format=("%YYYY-%MM-%DD")),  # forms.SelectDateWidget,
+            'date_of_scholarship': DateInput(format=("%YYYY-%MM-%DD")),  # forms.SelectDateWidget,
+            'course_work_completed_on': DateInput(format=("%YYYY-%MM-%DD")),  # forms.SelectDateWidget,
         }
 
 class OccupyingForm(forms.ModelForm):
