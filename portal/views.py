@@ -81,7 +81,6 @@ def occupy(request):
     now = datetime.datetime.now()
     is_visible = False
     if now.hour >= 9 and now.hour <= 24:
-        print('here')
         is_visible = True
     else:
         is_visible = False
@@ -90,9 +89,13 @@ def occupy(request):
         form = OccupyingForm(POST, request.FILES)
         if form.is_valid():
             applicants = Applicant.objects.filter(roll_number=request.user.username)
-            logger.error(form.cleaned_data['occupied_Type1'])
             for applicant in applicants:
                 applicant.occupied_Type1 = form.cleaned_data['occupied_Type1']
+                applicant.defer_Type1 = form.cleaned_data['defer_Type1']
+                applicant.occupied_Tulsi = form.cleaned_data['occupied_Tulsi']
+                applicant.defer_Tulsi = form.cleaned_data['defer_Tulsi']
+                applicant.occupied_MRSB = form.cleaned_data['occupied_MRSB']
+                applicant.defer_MRSB = form.cleaned_data['defer_MRSB']
                 applicant.save()
                 pass
             # form.save()
@@ -117,6 +120,14 @@ def vacate(request):
             applicants = Applicant.objects.filter(roll_number=request.user.username)
             for applicant in applicants:
                 if form.cleaned_data['vacate']:
+                    if applicant.occupied_Type1:
+                        applicant.occupied_Type1 = False
+                    elif applicant.occupied_Tulsi:
+                        applicant.occupied_Tulsi = False
+                    elif applicant.occupied_MRSB:
+                        applicant.occupied_MRSB = False
+                    else:
+                        pass
                     applicant.save(flag=False)
                     
                 pass

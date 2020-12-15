@@ -123,27 +123,27 @@ class Applicant(models.Model):
                             qs_excluded = qs.exclude(id=self.id, waitlist_Type1__lt=0) # exclude the current applicant and all those who are already occupying
                             qs_excluded = qs_excluded.exclude(waitlist_Type1__lt=self.waitlist_Type1)
                             qs_excluded.update(waitlist_Type1 = F('waitlist_Type1') - 1) # decrease the waitlist number by 1 for all those in the waitlist
-                            self.waitlist_Type1 = -1
+                            self.waitlist_Type1 = -2
                         elif self.occupied_Tulsi:
                             qs_excluded = qs.exclude(id=self.id, waitlist_Tulsi__lt=0)  # exclude the current applicant and all those who are already occupying
                             qs_excluded = qs_excluded.exclude(waitlist_Tulsi__lt=self.waitlist_Tulsi)
-                            qs_excluded.update(waitlist_Tulsi1=F('waitlist_Tulsi') - 1)  # decrease the waitlist number by 1 for all those in the waitlist
-                            self.waitlist_Tulsi = -1
+                            qs_excluded.update(waitlist_Tulsi=F('waitlist_Tulsi') - 1)  # decrease the waitlist number by 1 for all those in the waitlist
+                            self.waitlist_Tulsi = -2
                         elif self.occupied_MRSB:
                             qs_excluded = qs.exclude(id=self.id, waitlist_MRSB__lt=0)  # exclude the current applicant and all those who are already occupying
                             qs_excluded = qs_excluded.exclude(waitlist_MRSB__lt=self.waitlist_MRSB)
                             qs_excluded.update(waitlist_MRSB=F('waitlist_MRSB') - 1)  # decrease the waitlist number by 1 for all those in the waitlist
-                            self.waitlist_Tulsi = -1
+                            self.waitlist_Tulsi = -2
                         else:
                             pass
                         pass
                     elif not self.occupied_any() and self.deferred_any():
                         if self.defer_Type1:
-                            self.waitlist_Type1 = -2
+                            self.waitlist_Type1 = -1
                         elif self.defer_Tulsi:
-                            self.waitlist_Tulsi = -2
+                            self.waitlist_Tulsi = -1
                         elif self.defer_MRSB:
-                            self.waitlist_MRSB = -2
+                            self.waitlist_MRSB = -1
                     else:
                         pass
                 else:

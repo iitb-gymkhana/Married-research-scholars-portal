@@ -9,7 +9,7 @@ TULSI = 4  # Total Capacity
 MRSB = 4  # Total Capicity
 
 def get_waitlistType1():
-    waitlist = list(Applicant.objects.filter(waitlist_Type1__gt=0, defer_Type1=False).order_by('waitlist_Type1'))
+    waitlist = list(Applicant.objects.filter(waitlist_Type1__gte=-1).exclude(waitlist_Type1=0).order_by('waitlist_Type1'))
     TYPE1_VACANT = TYPE1 - len(Applicant.objects.filter(occupied_Type1=True))
     recepient_emails = []
     recepients = []
@@ -24,7 +24,7 @@ def get_waitlistType1():
 
 
 def get_waitlistTulsi():
-    waitlist = list(Applicant.objects.filter(waitlist_Tulsi__gt=0, defer_Tulsi=False).order_by('waitlist_Tulsi'))
+    waitlist = list(Applicant.objects.filter(waitlist_Tulsi__gte=-1).exclude(waitlist_Tulsi=0).order_by('waitlist_Tulsi'))
     TULSI_VACANT = TULSI - len(Applicant.objects.filter(occupied_Tulsi=True))
     recepient_emails = []
     recepients = []
@@ -38,7 +38,7 @@ def get_waitlistTulsi():
 
 
 def get_waitlistMRSB():
-    waitlist = list(Applicant.objects.filter(waitlist_MRSB__gt=0, defer_MRSB=False).order_by('waitlist_Type1'))
+    waitlist = list(Applicant.objects.filter(waitlist_MRSB__gte=-1).exclude(waitlist_MRSB=0).order_by('waitlist_Type1'))
     MRSB_VACANT = MRSB - len(Applicant.objects.filter(occupied_MRSB=True))
     recepient_emails = []
     recepients = []
