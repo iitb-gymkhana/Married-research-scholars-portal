@@ -21,7 +21,7 @@ DATABASES = {
 }
 
 
-ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "gymkhana.iitb.ac.in"]
 
 # Email server settings
 # EMAIL_HOST = "smtp-auth.iitb.ac.in"
@@ -31,9 +31,9 @@ EMAIL_USE_TLS = True
 # EMAIL_PORT = 25
 EMAIL_PORT = 587
 
-EMAIL_HOST_USER = "ipsit.iitb@gmail.com"
+EMAIL_HOST_USER = "" # use the appropriate sender email id
 
-EMAIL_HOST_PASSWORD = "ipsitmantri2000"
+EMAIL_HOST_PASSWORD = ""  # use the appropriate sender email password
 
 # Email Id which will appear in From header in email
 EMAIL_FROM = ""
@@ -62,7 +62,7 @@ DATABASES = {
 
 # OAuth2 settings
 AUTHORIZATION_URL = "https://gymkhana.iitb.ac.in/sso/oauth/authorize/"
-REDIRECT_URI = "http://127.0.0.1:8000/oauth/callback/"
+REDIRECT_URI = "https://gymkhana.iitb.ac.in/mrsp/oauth/callback/"
 CLIENT_ID = "QYeB9w4SSXCxQi2hNiaqJ1P1cZPeXpqOBcKNsTPe"
 CLIENT_SECRET = "ym4wqwvzUpKYYJVZ4gIVw2grfKZawJpJpr64RbOTdIttlroru8Ritpe1qbY9Wc7Pdsv3AFOTEqWYnB2wPQ2i3Qyv79d6GTPwSvWXcuZOk14WNI3tlj8i9PXpKqe9RZpw"
 SCOPE = "profile%20ldap%20insti_address%20insti_address%20program"
