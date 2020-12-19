@@ -66,21 +66,22 @@ def send_notifs_to_students():
     print("Notification Sent to Student at {}".format(now_))
 
 def send_notifs_to_ARHCU():
-    recepient = ['mmkipsit@gmail.com']
-    subject = "Married Research Scholar Portal Updates"
-    num_New_Applications = len(Applicant.objects.filter(
-        occupied_Type1 = False,
-        occupied_Tulsi = False,
-        occupied_MRSB = False,
-        marriage_certificate_verified = False,
-        joint_photograph_with_spouse_verified = False,
-        coursework_grade_sheet_verified = False,
-        recommendation_of_guide_for_accomodation_verified = False
-    ))
-    message = "You have {} new applications waiting to get verified".format(num_New_Applications)
-    now = datetime.datetime.now()
-    if now.hour == 6:
-        send_mail(subject, message, from_email=settings.EMAIL_HOST_USER, recipient_list=recepient)
-        print("Notification sent to ARHCU at {}".format(now))
-
-    
+    try:
+        recepient = ['']  # use ARHCU email id here
+        subject = "Married Research Scholar Portal Updates"
+        num_New_Applications = len(Applicant.objects.filter(
+            occupied_Type1=False,
+            occupied_Tulsi=False,
+            occupied_MRSB=False,
+            marriage_certificate_verified=False,
+            joint_photograph_with_spouse_verified=False,
+            coursework_grade_sheet_verified=False,
+            recommendation_of_guide_for_accomodation_verified=False
+        ))
+        message = "You have {} new applications waiting to get verified".format(num_New_Applications)
+        now = datetime.datetime.now()
+        if now.hour == 6:
+            send_mail(subject, message, from_email=settings.EMAIL_HOST_USER, recipient_list=recepient)
+            print("Notification sent to ARHCU at {}".format(now))
+    except:
+        pass

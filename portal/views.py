@@ -64,7 +64,7 @@ def waitlist(request):
 
 @login_required
 def occupy(request):
-    filter = 'Type-1'
+    filter = 'Sorry'
     _, eligible_Type1 = get_waitlistType1()
     _, eligible_Tulsi = get_waitlistTulsi()
     _, eligible_MRSB = get_waitlistMRSB()
@@ -111,7 +111,8 @@ def vacate(request):
     is_visible = False
     logger.error(applicants)
     for applicant in applicants:
-        is_visible = applicant.occupied_MRSB or applicant.occupied_Type1 or applicant.occupied_Tulsi
+        # is_visible = applicant.occupied_MRSB or applicant.occupied_Type1 or applicant.occupied_Tulsi
+        is_visible = (applicant.waitlist_Type1 == -2) or (applicant.waitlist_Tulsi == -2) or (applicant.waitlist_MRSB == -2)
     if request.method == 'POST':
         POST = request.POST
         form = VacatingForm(POST, request.FILES)
