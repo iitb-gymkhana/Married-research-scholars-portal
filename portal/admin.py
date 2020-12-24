@@ -4,12 +4,11 @@ from import_export.admin import ExportMixin
 from import_export.formats import base_formats
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from django.urls import reverse
+from django.utils.http import urlencode
+from django.utils.html import format_html
+from .models import Applicant, Waitlist, OccupiedList
 
-from .models import Applicant
-
-# @admin.register(User)
-# class AcadAdmin(UserAdmin):
-#     readonly_fields = []
 
 # class QueuerResource(resources.ModelResource):
 #     class Meta:
@@ -223,17 +222,74 @@ class ApplicantAdmin(ExportMixin, admin.ModelAdmin):
 #         Mark_as_not_placed,
 #     ]
 
+from .forms import MailingListForm
+class WaitlistAdmin(admin.ModelAdmin):
+    form = MailingListForm
+    list_display = ('building', 'view_applicants_link',)
+    filter_horizontal = ("applicant", )
+    
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "applicant":
+            kwargs['queryset'] = Applicant.objects.all()
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
-# No one can change users or groups.
-# admin.site.unregister(User)
-# admin.site.unregister(Group)
+    def view_applicants_link(self, obj):
+        count = obj.applicant.count()
+        url = (
+            reverse("admin:portal_applicant_changelist")
+            + "?"
+            + urlencode({"waitlist__id": f"{obj.id}"})
+        )
 
-# Register your models here.
-# admin.site.register(Building)
-# admin.site.register(Queuer, CustomQueuerAdmin)
-# admin.site.register(Dependant)
+        return format_html('<a href="{}">{} Applicants</a>', url, count)
+
+    view_applicants_link.short_description = "Applicants"
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        return response
+    
+class OccupiedListAdmin(admin.ModelAdmin):
+    list_display = ('building', 'view_applicants_link',)
+    filter_horizontal = ("applicant", )
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "applicant":
+            kwargs['queryset'] = Applicant.objects.all()
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
+
+    def view_applicants_link(self, obj):
+        count = obj.applicant.count()
+        url = (
+            reverse("admin:portal_applicant_changelist")
+            + "?"
+            + urlencode({"occupiedlist__id": f"{obj.id}"})
+        )
+
+        return format_html('<a href="{}">{} Applicants</a>', url, count)
+
+    view_applicants_link.short_description = "Applicants"
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        return response
+
 hcu_admin_site = HCUAdminSite(name='hcu_admin')
 acad_admin_site = AcadAdminSite(name='acad_admin')
 acad_admin_site.register(Applicant, AcadAdmin)
 hcu_admin_site.register(Applicant, HCUAdmin)
+hcu_admin_site.register(Waitlist, WaitlistAdmin)
+hcu_admin_site.register(OccupiedList, OccupiedListAdmin)
 admin.site.register(Applicant, ApplicantAdmin)
+admin.site.register(Waitlist, WaitlistAdmin)
+admin.site.register(OccupiedList, OccupiedListAdmin)

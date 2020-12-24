@@ -54,8 +54,8 @@ class Applicant(models.Model):
     application_received_by_hcu_date = models.DateTimeField(verbose_name="Application Received by H.C.Unit Date:", null=True, blank=True)
 
     class Meta:
-        verbose_name = 'Applicant'
-        verbose_name_plural = 'Applicants'
+        verbose_name = "Applicant"
+        verbose_name_plural = "Applicants"
         unique_together = ('name', 'roll_number')
 
     def __str__(self):
@@ -95,7 +95,7 @@ class Applicant(models.Model):
                     qs = Applicant.objects.all().filter(acad_details_verified=True, marriage_certificate_verified=True,
                                                         joint_photograph_with_spouse_verified=True,
                                                         coursework_grade_sheet_verified=True,
-                                                        recommendation_of_guide_for_accomodation_verified=True).order_by('date_applied')
+                                                        recommendation_of_guide_for_accomodation_verified=True).order_by('verified_time')
                     if not self.occupied_any() and not self.deferred_any():
                         """Either entering into waitlist ot vacating the accomodation"""
                         if flag:
@@ -111,39 +111,63 @@ class Applicant(models.Model):
                             """If the applicant has vacated"""
                             if not self.occupied_Tulsi:
                                 self.waitlist_Tulsi = 0
+                                vacated_list = VacatedList.objects.filter(building='Tulsi')
+                                for building in vacated_list:
+                                    building.applicant.add(self)
+                                    building.save()
+                                occupied_list = OccupiedList.objects.filter(building='Tulsi')
+                                for building in occupied_list:
+                                    building.applicant.exclude(self)
+                                    building.save()
                             elif not self.occupied_Type1:
                                 self.waitlist_Type1 = 0
+                                vacated_list = VacatedList.objects.filter(building='Type-1')
+                                for building in vacated_list:
+                                    building.applicant.add(self)
+                                    building.save()
+                                occupied_list = OccupiedList.objects.filter(building='Type-1')
+                                for building in occupied_list:
+                                    building.applicant.exclude(self)
+                                    building.save()
                             elif not self.occupied_MRSB:
                                 self.waitlist_MRSB = 0
+                                vacated_list = VacatedList.objects.filter(building='Manas')
+                                for building in vacated_list:
+                                    building.applicant.add(self)
+                                    building.save()
+                                occupied_list = OccupiedList.objects.filter(building='Manas')
+                                for building in occupied_list:
+                                    building.applicant.exclude(self)
+                                    building.save()
                             else:
                                 pass
-                    elif self.occupied_any() and not self.deferred_any():
-                        """If the applicant has occupied any building"""
-                        if self.occupied_Type1:
-                            qs_excluded = qs.exclude(id=self.id, waitlist_Type1__lt=0) # exclude the current applicant and all those who are already occupying
-                            qs_excluded = qs_excluded.exclude(waitlist_Type1__lt=self.waitlist_Type1)
-                            qs_excluded.update(waitlist_Type1 = F('waitlist_Type1') - 1) # decrease the waitlist number by 1 for all those in the waitlist
-                            self.waitlist_Type1 = -2
-                        elif self.occupied_Tulsi:
-                            qs_excluded = qs.exclude(id=self.id, waitlist_Tulsi__lt=0)  # exclude the current applicant and all those who are already occupying
-                            qs_excluded = qs_excluded.exclude(waitlist_Tulsi__lt=self.waitlist_Tulsi)
-                            qs_excluded.update(waitlist_Tulsi=F('waitlist_Tulsi') - 1)  # decrease the waitlist number by 1 for all those in the waitlist
-                            self.waitlist_Tulsi = -2
-                        elif self.occupied_MRSB:
-                            qs_excluded = qs.exclude(id=self.id, waitlist_MRSB__lt=0)  # exclude the current applicant and all those who are already occupying
-                            qs_excluded = qs_excluded.exclude(waitlist_MRSB__lt=self.waitlist_MRSB)
-                            qs_excluded.update(waitlist_MRSB=F('waitlist_MRSB') - 1)  # decrease the waitlist number by 1 for all those in the waitlist
-                            self.waitlist_Tulsi = -2
-                        else:
-                            pass
-                        pass
-                    elif not self.occupied_any() and self.deferred_any():
-                        if self.defer_Type1:
-                            self.waitlist_Type1 = -1
-                        elif self.defer_Tulsi:
-                            self.waitlist_Tulsi = -1
-                        elif self.defer_MRSB:
-                            self.waitlist_MRSB = -1
+                    # elif self.occupied_any() and not self.deferred_any():
+                    #     """If the applicant has occupied any building"""
+                    #     if self.occupied_Type1:
+                    #         qs_excluded = qs.exclude(id=self.id, waitlist_Type1__lt=0) # exclude the current applicant and all those who are already occupying
+                    #         qs_excluded = qs_excluded.exclude(waitlist_Type1__lt=self.waitlist_Type1)
+                    #         qs_excluded.update(waitlist_Type1 = F('waitlist_Type1') - 1) # decrease the waitlist number by 1 for all those in the waitlist
+                    #         self.waitlist_Type1 = -2
+                    #     elif self.occupied_Tulsi:
+                    #         qs_excluded = qs.exclude(id=self.id, waitlist_Tulsi__lt=0)  # exclude the current applicant and all those who are already occupying
+                    #         qs_excluded = qs_excluded.exclude(waitlist_Tulsi__lt=self.waitlist_Tulsi)
+                    #         qs_excluded.update(waitlist_Tulsi=F('waitlist_Tulsi') - 1)  # decrease the waitlist number by 1 for all those in the waitlist
+                    #         self.waitlist_Tulsi = -2
+                    #     elif self.occupied_MRSB:
+                    #         qs_excluded = qs.exclude(id=self.id, waitlist_MRSB__lt=0)  # exclude the current applicant and all those who are already occupying
+                    #         qs_excluded = qs_excluded.exclude(waitlist_MRSB__lt=self.waitlist_MRSB)
+                    #         qs_excluded.update(waitlist_MRSB=F('waitlist_MRSB') - 1)  # decrease the waitlist number by 1 for all those in the waitlist
+                    #         self.waitlist_Tulsi = -2
+                    #     else:
+                    #         pass
+                    #     pass
+                    # elif not self.occupied_any() and self.deferred_any():
+                    #     if self.defer_Type1:
+                    #         self.waitlist_Type1 = -1
+                    #     elif self.defer_Tulsi:
+                    #         self.waitlist_Tulsi = -1
+                    #     elif self.defer_MRSB:
+                    #         self.waitlist_MRSB = -1
                     else:
                         pass
                 else:
@@ -152,96 +176,54 @@ class Applicant(models.Model):
             else:
                 pass
             
-            # if not self.verified_time:
-            #     if self.all_verified():
-            #         self.verified_time = timezone.now()
-
-            # if not self.all_verified():
-            #     """ If an option is unchecked later, again remove the verified time """
-            #     self.verified_time = None
-            
-            # if self.all_verified() and not (self.occupied_MRSB or self.occupied_Tulsi or self.occupied_Type1):
-            #     if flag:
-            #         self.waitlist_Type1 = 1 + len(Applicant.objects.filter(
-            #             occupied_Type1=False,
-            #             marriage_certificate_verified=True,
-            #             joint_photograph_with_spouse_verified=True,
-            #             coursework_grade_sheet_verified=True,
-            #             recommendation_of_guide_for_accomodation_verified=True,
-            #         ))
-            #         self.waitlist_Tulsi = 1 + len(Applicant.objects.filter(
-            #             occupied_Tulsi=False,
-            #             marriage_certificate_verified=True,
-            #             joint_photograph_with_spouse_verified=True,
-            #             coursework_grade_sheet_verified=True,
-            #             recommendation_of_guide_for_accomodation_verified=True
-            #         ))
-            #         self.waitlist_MRSB = 1 + len(Applicant.objects.filter(
-            #             occupied_MRSB=False,
-            #             marriage_certificate_verified=True,
-            #             joint_photograph_with_spouse_verified=True,
-            #             coursework_grade_sheet_verified=True,
-            #             recommendation_of_guide_for_accomodation_verified=True
-            #         ))
-            #     else:
-            #         logger.error("Came Here!!")
-            #         pass
-
-            # elif self.all_verified() and (self.occupied_MRSB or self.occupied_Tulsi or self.occupied_Type1):
-            #     if self.occupied_Type1:
-            #         for applicant in Applicant.objects.filter(marriage_certificate_verified=True,
-            #                                                   joint_photograph_with_spouse_verified=True,
-            #                                                   coursework_grade_sheet_verified=True,
-            #                                                   recommendation_of_guide_for_accomodation_verified=True,
-            #                                                   occupied_Type1=False):
-            #             if applicant.name != self.name:
-            #                 if applicant.waitlist_Type1 > self.waitlist_Type1:
-            #                     applicant.waitlist_Type1 -= 1
-            #                     applicant.save(flag=False)
-            #         self.waitlist_Type1 = 0
-            #         self.defer_Type1 = False
-            #         # send confirmation email
-            #     elif self.occupied_Tulsi:
-            #         for applicant in Applicant.objects.filter(marriage_certificate_verified=True,
-            #                                                   joint_photograph_with_spouse_verified=True,
-            #                                                   coursework_grade_sheet_verified=True,
-            #                                                   recommendation_of_guide_for_accomodation_verified=True,
-            #                                                   occupied_Tulsi=False):
-            #             if applicant.name != self.name:
-            #                 if applicant.waitlist_Tulsi > self.waitlist_Tulsi:
-            #                     applicant.waitlist_Tulsi -= 1
-            #                     applicant.save(flag=False)
-            #         self.waitlist_Tulsi = 0
-            #         self.defer_Tulsi = False
-            #         # send confirmation email
-            #     elif self.occupied_MRSB:
-            #         for applicant in Applicant.objects.filter(marriage_certificate_verified=True,
-            #                                                   joint_photograph_with_spouse_verified=True,
-            #                                                   coursework_grade_sheet_verified=True,
-            #                                                   recommendation_of_guide_for_accomodation_verified=True,
-            #                                                   occupied_MRSB=False):
-            #             if applicant.name != self.name:
-            #                 if applicant.waitlist_MRSB > self.waitlist_MRSB:
-            #                     applicant.waitlist_MRSB -= 1
-            #                     applicant.save(flag=False)
-            #         self.waitlist_MRSB = 0
-            #         self.defer_MRSB = False
-            #         # send confirmation email
-            # # else:
-            # #     self.waitlist_MRSB = 0
-            # #     self.waitlist_Tulsi = 0
-            # #     self.waitlist_Type1 = 0
-            
         super(Applicant, self).save(*args, **kwargs)
 
-# class Documents(models.Model):
-#     applicant = models.OneToOneField(Applicant, on_delete=models.CASCADE, primary_key=True)
 
-#     spouse_name = models.CharField(max_length=128, null=True, blank=False, default='Spouse')
-#     spouse_roll_number = models.CharField(max_length=128, null=True, blank=False, default='N/A')
-#     spouse_designation = models.CharField(max_length=128, null=True, blank=False, default='N/A')
-#     date_of_marriage = models.DateField(null=True, default='', blank=False)
-#     marriage_certificate = models.FileField(upload_to='marriage_certificates/', null=True, blank=False)
-#     joint_photograph_with_spouse = models.FileField(upload_to='photo_with_spouse/', null=True, blank=False)
-#     coursework_grade_sheet = models.FileField(upload_to='grade_sheet/', null=True, blank=False)
-#     recommendation_of_guide_for_accomodation = models.FileField(upload_to='guide_recommendation/', null=True, blank=False)
+class Waitlist(models.Model):
+    building = models.CharField(max_length=125, unique=True)
+    applicant = models.ManyToManyField(Applicant, blank=True)
+
+
+    def __str__(self):
+        return self.building
+
+    def save(self, *args, **kwargs):
+        super(Waitlist, self).save(*args, **kwargs)
+
+class OccupiedList(models.Model):
+    building = models.CharField(max_length=125, unique=True)
+    applicant = models.ManyToManyField(Applicant, blank=True)
+
+    def __str__(self):
+        return self.building
+
+    class Meta:
+        verbose_name = "Occupied List"
+        verbose_name_plural = "Occupied Lists"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for student in self.applicant.all():
+            if self.building == 'Type-1':
+                student.occupied_Type1 = True
+                student.waitlist_Type1 = 0
+            elif self.building == 'Tulsi':
+                student.occupied_Tulsi = True
+                student.waitlist_Tulsi = 0
+            elif self.building == 'Manas':
+                student.occupied_MRSB = True
+                student.waitlist_MRSB = 0
+            student.save(flag=True)
+        
+        # Send an email
+        
+class VacatedList(models.Model):
+    building = models.CharField(max_length=125, unique=True)
+    applicant = models.ManyToManyField(Applicant, blank=True)
+
+    def __str__(self):
+        return self.building
+    
+    def save(self, *args, **kwargs):
+        super(VacatedList, self).save(*args, **kwargs)
+        

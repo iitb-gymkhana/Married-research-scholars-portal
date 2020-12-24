@@ -1,5 +1,7 @@
 from django import forms
-from .models import Applicant
+from django.db.models import fields
+from django.forms.widgets import Widget
+from .models import Applicant, Waitlist
 from django.contrib.admin import widgets
 
 
@@ -74,3 +76,16 @@ class VacatingForm(forms.Form):
     """Form definition for Vacating"""
     vacate = forms.BooleanField(label="Vacate your apartment",required=True)
 
+class MailingListForm(forms.ModelForm):
+    class Meta:
+        model = Waitlist
+        fields = '__all__'
+
+    applicant = forms.ModelMultipleChoiceField(Applicant.objects.all(), widget=widgets.FilteredSelectMultiple('Applicant', False, attrs={'rows': '2'}), required=False)
+
+    def save(self, commit=True):
+        print(self.cleaned_data)
+        buil = Waitlist.objects.filter(building=self.cleaned_data['building'])
+        for b in buil:
+            print(b.applicant.all())
+        return super(MailingListForm, self).save(commit=commit)
