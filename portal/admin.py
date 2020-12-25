@@ -2,51 +2,61 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ExportMixin
 from import_export.formats import base_formats
-from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.html import format_html
-from .models import Applicant, Waitlist, OccupiedList
+from .models import Applicant, Waitlist, OccupiedList, VacatedList
+from django.utils.translation import gettext_lazy as _
+from .forms import OccupiedListForm, VacatedListForm, MailingListForm
+from django.db.models import Q
 
+class OccupiedFilter(admin.SimpleListFilter):
+    title = _('Building Occupied')
+    parameter_name = 'occupiedlist__id'
 
-# class QueuerResource(resources.ModelResource):
-#     class Meta:
-#         model = Queuer
+    def lookups(self, request, model_admin):
+        return (
+            ('2', _('Tulsi')),
+            ('3', _('Manas')),
+            ('1', _('Type-1')),
+        )
 
+    def queryset(self, request, queryset):
+        if self.value() == '1':
+            return queryset.filter(occupiedlist__id=1)
+        if self.value() == '2':
+            return queryset.filter(occupiedlist__id=2)
+        if self.value() == '3':
+            return queryset.filter(occupiedlist__id=3)
 
-# class DependantResource(resources.ModelResource):
-#     class Meta:
-#         model = Dependant
+class VacatedFilter(admin.SimpleListFilter):
+    title = _('Building Vacated')
+    parameter_name = 'vacatedlist__id'
+    def lookups(self, request, model_admin):
+        return (
+            ('2', _('Tulsi')),
+            ('3', _('Manas')),
+            ('1', _('Type-1')),
+        )
 
-# class CustomDependantAdmin(admin.ModelAdmin):
-#     """Admin View for Dependant"""
+    def queryset(self, request, queryset):
+        if self.value() == '1':
+            return queryset.filter(vacatedlist__id=1)
+        if self.value() == '2':
+            return queryset.filter(vacatedlist__id=2)
+        if self.value() == '3':
+            return queryset.filter(vacatedlist__id=3)
 
-#     resource_class = DependantResource
-#     readonly_fields = ("__all__")
-#     list_display = (
-#         "queuer",
-#         "name",
-#         "contact_number",
-#         "photo"
-#     )
 
 class ApplicantResource(resources.ModelResource):
     class Meta:
         model = Applicant
 
-# class DocumentResource(resources.ModelResource):
-#     class Meta:
-#         model = Documents
-
-# class DocumentsAdmin(admin.ModelAdmin):
-#     resource_class = DocumentResource
-#     readonly_fields = ('applicant', )
 
 class HCUAdminSite(admin.AdminSite):
     site_header = "HCU Admin"
     site_title = "HCU Admin Portal"
-    index_title = "Welcome to the HCU admin portal"
+    index_title = "Welcome to the HCU Admin Portal"
 
 class HCUAdminApplicantResource(resources.ModelResource):
     class Meta:
@@ -62,7 +72,7 @@ class HCUAdmin(ExportMixin, admin.ModelAdmin):
         "waitlist_Type1",
         "waitlist_Tulsi",
         "waitlist_MRSB",
-        # "all_verified",
+        "all_verified",
         "occupied_Type1",
         "occupied_Tulsi",
         "occupied_MRSB"
@@ -70,9 +80,8 @@ class HCUAdmin(ExportMixin, admin.ModelAdmin):
 
     search_fields = ("name", "roll_number")
     list_filter = (
-        "occupied_Type1",
-        "occupied_Tulsi",
-        "occupied_MRSB",
+        OccupiedFilter,
+        VacatedFilter
     )
     readonly_fields = ('name', 'roll_number', 'date_of_registration', 'department',
                        'email', 'phone_number', 'permanent_address', 'scholarship', 'date_of_scholarship', 'course_work_completed_on',
@@ -88,7 +97,9 @@ class HCUAdmin(ExportMixin, admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(HCUAdmin, self).get_queryset(request)
         
-        return qs.filter(acad_details_verified=True).order_by('date_applied')
+        return qs.filter(acad_details_verified=True).order_by('acad_details_verification_date',
+                                                              'waitlist_Type1', 'waitlist_Tulsi',
+                                                              'waitlist_MRSB')
 
     def get_export_formats(self):
         formats = (
@@ -121,12 +132,15 @@ class AcadAdmin(admin.ModelAdmin):
     )
     fields = ('name', 'roll_number', 'date_of_registration', 'department',
               'email', 'phone_number', 'permanent_address', 'scholarship', 'date_of_scholarship', 'course_work_completed_on',
-              'course_work_completed_by', 'scholarship_awarded_upto', 'acad_details_verified', 'acad_details_verification_date')
+              'course_work_completed_by', 'scholarship_awarded_upto', 'acad_details_verified', 'acad_details_verification_date', 'acadsection_feedback')
     readonly_fields = ('name', 'roll_number', 'date_of_registration', 'department',
                        'email', 'phone_number', 'permanent_address', 'scholarship', 'date_of_scholarship', 'course_work_completed_on',
                        'course_work_completed_by')
 
+    def get_queryset(self, request):
+        qs = super(AcadAdmin, self).get_queryset(request)
 
+        return qs.order_by('date_applied')
 
 class ApplicantAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = ApplicantResource
@@ -138,7 +152,7 @@ class ApplicantAdmin(ExportMixin, admin.ModelAdmin):
         "waitlist_Type1",
         "waitlist_Tulsi",
         "waitlist_MRSB",
-        # "all_verified",
+        "all_verified",
         "occupied_Type1",
         "occupied_Tulsi",
         "occupied_MRSB"
@@ -146,9 +160,8 @@ class ApplicantAdmin(ExportMixin, admin.ModelAdmin):
 
     search_fields = ("name", "roll_number")
     list_filter = (
-        "occupied_Type1",
-        "occupied_Tulsi",
-        "occupied_MRSB",
+        OccupiedFilter,
+        VacatedFilter,
     )
 
     def get_export_formats(self):
@@ -222,7 +235,6 @@ class ApplicantAdmin(ExportMixin, admin.ModelAdmin):
 #         Mark_as_not_placed,
 #     ]
 
-from .forms import MailingListForm
 class WaitlistAdmin(admin.ModelAdmin):
     form = MailingListForm
     list_display = ('building', 'view_applicants_link',)
@@ -230,7 +242,10 @@ class WaitlistAdmin(admin.ModelAdmin):
     
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "applicant":
-            kwargs['queryset'] = Applicant.objects.all()
+            kwargs['queryset'] = Applicant.objects.filter(acad_details_verified=True, marriage_certificate_verified=True,
+                                                        joint_photograph_with_spouse_verified=True,
+                                                        coursework_grade_sheet_verified=True,
+                                                        recommendation_of_guide_for_accomodation_verified=True)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def view_applicants_link(self, obj):
@@ -257,10 +272,13 @@ class WaitlistAdmin(admin.ModelAdmin):
 class OccupiedListAdmin(admin.ModelAdmin):
     list_display = ('building', 'view_applicants_link',)
     filter_horizontal = ("applicant", )
-
+    form = OccupiedListForm
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "applicant":
-            kwargs['queryset'] = Applicant.objects.all()
+            kwargs['queryset'] = Applicant.objects.filter(acad_details_verified=True, marriage_certificate_verified=True,
+                                                        joint_photograph_with_spouse_verified=True,
+                                                        coursework_grade_sheet_verified=True,
+                                                        recommendation_of_guide_for_accomodation_verified=True, waitlist__id__isnull=True)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def view_applicants_link(self, obj):
@@ -284,12 +302,45 @@ class OccupiedListAdmin(admin.ModelAdmin):
 
         return response
 
+class VacatedListAdmin(admin.ModelAdmin):
+    list_display = ('building', 'view_applicants_link',)
+    filter_horizontal = ("applicant",)
+    form = VacatedListForm
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "applicant":
+            kwargs['queryset'] = Applicant.objects.filter(Q(occupied_Type1=True) | Q(occupied_Tulsi=True) | Q(occupied_MRSB=True))
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
+
+    def view_applicants_link(self, obj):
+        count = obj.applicant.count()
+        url = (
+                reverse("admin:portal_applicant_changelist")
+                + "?"
+                + urlencode({"vacatedlist__id": f"{obj.id}"})
+        )
+
+        return format_html('<a href="{}">{} Applicants</a>', url, count)
+
+    view_applicants_link.short_description = "Applicants"
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        return response
+
+
 hcu_admin_site = HCUAdminSite(name='hcu_admin')
 acad_admin_site = AcadAdminSite(name='acad_admin')
 acad_admin_site.register(Applicant, AcadAdmin)
 hcu_admin_site.register(Applicant, HCUAdmin)
 hcu_admin_site.register(Waitlist, WaitlistAdmin)
 hcu_admin_site.register(OccupiedList, OccupiedListAdmin)
+hcu_admin_site.register(VacatedList, VacatedListAdmin)
 admin.site.register(Applicant, ApplicantAdmin)
 admin.site.register(Waitlist, WaitlistAdmin)
 admin.site.register(OccupiedList, OccupiedListAdmin)
+admin.site.register(VacatedList, VacatedListAdmin)

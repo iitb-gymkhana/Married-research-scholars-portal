@@ -5,6 +5,7 @@ import logging
 logger = logging.getLogger('__name__')
 from django.core.mail import send_mail
 from django.db.models import F
+from django.conf import settings
 
 
 class Applicant(models.Model):
@@ -29,7 +30,7 @@ class Applicant(models.Model):
     coursework_grade_sheet = models.FileField(upload_to='grade_sheet/', null=True, blank=False)
     recommendation_of_guide_for_accomodation = models.FileField(upload_to='guide_recommendation/', null=True,
                                                                 blank=False)
-    spouse_name = models.CharField(max_length=128, null=True, blank=False, default='Spouse')
+    spouse_name = models.CharField(max_length=128, null=True, blank=False, default='Name of your Spouse')
     spouse_roll_number = models.CharField(max_length=128, null=True, blank=False, default='N/A')
     spouse_designation = models.CharField(max_length=128, null=True, blank=False, default='N/A')
     marriage_certificate_verified = models.BooleanField(default=False, null=False)
@@ -37,6 +38,7 @@ class Applicant(models.Model):
     coursework_grade_sheet_verified = models.BooleanField(default=False, null=False)
     recommendation_of_guide_for_accomodation_verified = models.BooleanField(default=False, null=False)
     feedback = models.TextField(default='Your Documents are not yet verified!', null=True, blank=True)
+    acadsection_feedback = models.TextField(default='', null=True, blank=True, verbose_name="Feedback")
     waitlist_Type1 = models.IntegerField(default=0, db_index=True, editable=False)
     waitlist_Tulsi = models.IntegerField(default=0, db_index=True, editable=False)
     waitlist_MRSB = models.IntegerField(default=0, db_index=True, editable=False)
@@ -56,7 +58,7 @@ class Applicant(models.Model):
     class Meta:
         verbose_name = "Applicant"
         verbose_name_plural = "Applicants"
-        unique_together = ('name', 'roll_number')
+        # unique_together = ('name', 'roll_number')
 
     def __str__(self):
         return self.name
@@ -65,7 +67,8 @@ class Applicant(models.Model):
         return bool(self.marriage_certificate_verified and
                     self.coursework_grade_sheet_verified and
                     self.joint_photograph_with_spouse_verified and
-                    self.recommendation_of_guide_for_accomodation_verified
+                    self.recommendation_of_guide_for_accomodation_verified and
+                    self.acad_details_verified
                     )
     all_verified.boolean = True
 
@@ -111,33 +114,39 @@ class Applicant(models.Model):
                             """If the applicant has vacated"""
                             if not self.occupied_Tulsi:
                                 self.waitlist_Tulsi = 0
+                                self.occupied_Type1 = False
+                                self.occupied_MRSB = False
                                 vacated_list = VacatedList.objects.filter(building='Tulsi')
                                 for building in vacated_list:
                                     building.applicant.add(self)
                                     building.save()
                                 occupied_list = OccupiedList.objects.filter(building='Tulsi')
                                 for building in occupied_list:
-                                    building.applicant.exclude(self)
+                                    building.applicant.exclude(id=self.id)
                                     building.save()
                             elif not self.occupied_Type1:
                                 self.waitlist_Type1 = 0
+                                self.occupied_Tulsi = False
+                                self.occupied_MRSB = False
                                 vacated_list = VacatedList.objects.filter(building='Type-1')
                                 for building in vacated_list:
                                     building.applicant.add(self)
                                     building.save()
                                 occupied_list = OccupiedList.objects.filter(building='Type-1')
                                 for building in occupied_list:
-                                    building.applicant.exclude(self)
+                                    building.applicant.exclude(id=self.id)
                                     building.save()
                             elif not self.occupied_MRSB:
                                 self.waitlist_MRSB = 0
+                                self.occupied_Type1 = False
+                                self.occupied_Tulsi = False
                                 vacated_list = VacatedList.objects.filter(building='Manas')
                                 for building in vacated_list:
                                     building.applicant.add(self)
                                     building.save()
                                 occupied_list = OccupiedList.objects.filter(building='Manas')
                                 for building in occupied_list:
-                                    building.applicant.exclude(self)
+                                    building.applicant.exclude(id=self.id)
                                     building.save()
                             else:
                                 pass
@@ -171,55 +180,126 @@ class Applicant(models.Model):
                     else:
                         pass
                 else:
-                    """If the all details are not verified by HCU"""
+                    """If the all details are not verified by Acad"""
                     self.verified_time = None
+                    if not flag:
+                        emailid = self.email
+                        subject = "Married Research Scholar Portal"
+                        message = f"{self.feedback} \n You are requested to modify your application."
+                        send_mail(
+                            subject=subject,
+                            recipient_list=[emailid, ],
+                            message=message,
+                            from_email=settings.EMAIL_HOST_USER
+                        )
+                    else:
+                        pass
             else:
-                pass
+                if not flag:
+                    emailid = self.email
+                    subject = "Married Research Scholar Portal"
+                    message = f"{self.acadsection_feedback} \n You are requested to modify your application."
+                    send_mail(
+                        subject=subject,
+                        recipient_list=[emailid,],
+                        message=message,
+                        from_email=settings.EMAIL_HOST_USER
+                    )
+                else:
+                    pass
             
         super(Applicant, self).save(*args, **kwargs)
+
+    def delete(self, using=None, keep_parents=False):
+        qs = Applicant.objects.all().filter(acad_details_verified=True, marriage_certificate_verified=True,
+                                            joint_photograph_with_spouse_verified=True,
+                                            coursework_grade_sheet_verified=True,
+                                            recommendation_of_guide_for_accomodation_verified=True).order_by(
+            'date_applied')
+        qs_excluded = qs.exclude(id=self.id)  # exclude the current applicant and all those who are already occupying
+        qs_excluded1 = qs_excluded.exclude(
+            waitlist_Type1__lte=self.waitlist_Type1)  # list of students having higher waitlist than current applicant
+        qs_excluded1.update(waitlist_Type1=F('waitlist_Type1') - 1)
+        qs_excluded2 = qs_excluded.exclude(
+            waitlist_Tulsi__lte=self.waitlist_Tulsi)  # list of students having higher waitlist than current applicant
+        qs_excluded2.update(waitlist_Tulsi=F('waitlist_Tulsi') - 1)
+        qs_excluded3 = qs_excluded.exclude(
+            waitlist_MRSB__lte=self.waitlist_MRSB)  # list of students having higher waitlist than current applicant
+        qs_excluded3.update(waitlist_MRSB=F('waitlist_MRSB') - 1)
+
+        super(Applicant, self).delete(using=None, keep_parents=False)
 
 
 class Waitlist(models.Model):
     building = models.CharField(max_length=125, unique=True)
     applicant = models.ManyToManyField(Applicant, blank=True)
 
+    class Meta:
+        verbose_name = "Offered"
+        verbose_name_plural = "Offered"
 
     def __str__(self):
         return self.building
 
     def save(self, *args, **kwargs):
         super(Waitlist, self).save(*args, **kwargs)
+        # send_mail(
+        #     subject='Subject',
+        #     message="Message",
+        #     from_email='180070032@iitb.ac.in',
+        #     recipient_list=['180070032@iitb.ac.in', ],
+        # )
 
 class OccupiedList(models.Model):
     building = models.CharField(max_length=125, unique=True)
     applicant = models.ManyToManyField(Applicant, blank=True)
 
+    class Meta:
+        verbose_name = "Occupied"
+        verbose_name_plural = "Occupied"
+
     def __str__(self):
         return self.building
 
-    class Meta:
-        verbose_name = "Occupied List"
-        verbose_name_plural = "Occupied Lists"
-
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        qs = Applicant.objects.all().filter(acad_details_verified=True, marriage_certificate_verified=True,
+                                      joint_photograph_with_spouse_verified=True,
+                                      coursework_grade_sheet_verified=True,
+                                      recommendation_of_guide_for_accomodation_verified=True).order_by('date_applied')
         for student in self.applicant.all():
             if self.building == 'Type-1':
                 student.occupied_Type1 = True
+                qs_excluded = qs.exclude(id=student.id)  # exclude the current applicant and all those who are already occupying
+                qs_excluded = qs_excluded.exclude(waitlist_Type1__lte=student.waitlist_Type1) # list of students having higher waitlist than current applicant
+                qs_excluded.update(waitlist_Type1 = F('waitlist_Type1') - 1)
                 student.waitlist_Type1 = 0
             elif self.building == 'Tulsi':
                 student.occupied_Tulsi = True
+                qs_excluded = qs.exclude(
+                    id=student.id)  # exclude the current applicant and all those who are already occupying
+                qs_excluded = qs_excluded.exclude(
+                    waitlist_Tulsi__lte=student.waitlist_Tulsi)  # list of students having higher waitlist than current applicant
+                qs_excluded.update(waitlist_Tulsi=F('waitlist_Tulsi') - 1)
                 student.waitlist_Tulsi = 0
             elif self.building == 'Manas':
                 student.occupied_MRSB = True
+                qs_excluded = qs.exclude(
+                    id=student.id)  # exclude the current applicant and all those who are already occupying
+                qs_excluded = qs_excluded.exclude(
+                    waitlist_MRSB__lte=student.waitlist_MRSB)  # list of students having higher waitlist than current applicant
+                qs_excluded.update(waitlist_MRSB=F('waitlist_MRSB') - 1)
                 student.waitlist_MRSB = 0
             student.save(flag=True)
-        
+        super().save(*args, **kwargs)
         # Send an email
         
 class VacatedList(models.Model):
     building = models.CharField(max_length=125, unique=True)
     applicant = models.ManyToManyField(Applicant, blank=True)
+
+    class Meta:
+        verbose_name = "Vacated"
+        verbose_name_plural = "Vacated"
 
     def __str__(self):
         return self.building

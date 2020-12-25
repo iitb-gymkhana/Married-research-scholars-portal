@@ -164,7 +164,7 @@ crashlytics-build.properties
 
 media/*
 logs/*
-generatedstaticfiles/
+#generatedstaticfiles/
 
 uwsgi.ini
 

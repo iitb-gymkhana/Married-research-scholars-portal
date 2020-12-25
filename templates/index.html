@@ -1,6 +1,6 @@
 <!-- TODO: Take the template variables from settings instead of writing again. -->
-{% with SITE_TITLE="Married research scholars portal" %}
-{% with DESCRIPTION="Apply for apartments for married scholars" %}
+{% with SITE_TITLE="Married Research Scholars Portal" %}
+{% with DESCRIPTION="Apply for apartments for Married Research Scholars" %}
 
 {% load static %}
 <!DOCTYPE html>
@@ -17,14 +17,14 @@
   {% block head_favicon %}
   <link rel="icon" type="image/png" href="{% static 'favicon.ico' %}">
   {% endblock head_favicon %}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
 <!-- JS, Popper.js, and jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
   {% block cssLinks %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}" />
+      <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
   {% endblock %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}" />
   <style>
@@ -32,9 +32,9 @@
       {% comment %} color: #5e5e5e; {% endcomment %}
       display: flex;
       flex-direction: column;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+      {#font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;#}
+      {#margin: 0;#}
+      {#padding: 0;#}
     }
 
     /* Navbar */
@@ -42,7 +42,7 @@
       display: flex;
       padding: 0;
       margin: 0;
-      font-weight: 300;
+      font-weight: 600;
       justify-content: space-between;
       align-items: center;
     }
@@ -50,7 +50,7 @@
     #my-nav a {
       padding: 15px;
       font-size: 18px;
-      color: #5e5e5e;
+      {#color: #5e5e5e;#}
       text-decoration: none;
     }
 
@@ -89,7 +89,7 @@
 <body>
 
   <!-- Fixed navbar -->
-  <nav id="my-nav" class="navbar-light" style="background-color: #e3f2fd;">
+  <nav id="my-nav" class="navbar-light bg-light" >
     <h1>
       <a href="{% url 'portal:home' %}"> {{ SITE_TITLE }} </a>
 
@@ -107,9 +107,7 @@
       <p>
         {{ DESCRIPTION }}
       </p>
-      <div class="linkToPortal">
-        <a href="{% url 'portal:home' %}" class="btn">Click here to go to the portal</a>
-      </div>
+        <a href="{% url 'portal:home' %}"><button class="btn btn-outline-info">Click here to go to the portal</button></a>
     </div>
   </main>
   {% endblock %}
