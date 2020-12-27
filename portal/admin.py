@@ -131,11 +131,11 @@ class AcadAdmin(admin.ModelAdmin):
         'acad_details_verified'
     )
     fields = ('name', 'roll_number', 'date_of_registration', 'department',
-              'email', 'phone_number', 'permanent_address', 'scholarship', 'date_of_scholarship', 'course_work_completed_on',
+              'email', 'phone_number', 'permanent_address', 'scholarship', 'date_of_scholarship', 'course_work_completed_on','date_applied',
               'course_work_completed_by', 'scholarship_awarded_upto', 'acad_details_verified', 'acad_details_verification_date', 'acadsection_feedback')
     readonly_fields = ('name', 'roll_number', 'date_of_registration', 'department',
                        'email', 'phone_number', 'permanent_address', 'scholarship', 'date_of_scholarship', 'course_work_completed_on',
-                       'course_work_completed_by')
+                       'course_work_completed_by', 'date_applied')
 
     def get_queryset(self, request):
         qs = super(AcadAdmin, self).get_queryset(request)

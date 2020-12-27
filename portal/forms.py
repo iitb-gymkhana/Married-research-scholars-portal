@@ -4,6 +4,7 @@ from .models import Applicant, Waitlist, OccupiedList, VacatedList
 from django.contrib.admin import widgets
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -33,9 +34,9 @@ class ApplicantForm(forms.ModelForm):
             'occupied_Type1',
             'occupied_Tulsi',
             'occupied_MRSB',
-            'defer_Type1',
-            'defer_Tulsi',
-            'defer_MRSB',
+            # 'defer_Type1',
+            # 'defer_Tulsi',
+            # 'defer_MRSB',
             'acad_details_verification_date',
             'application_received_by_hcu_date',
             'acad_details_verified',
@@ -47,32 +48,6 @@ class ApplicantForm(forms.ModelForm):
             'date_of_scholarship': DateInput(format=("%YYYY-%MM-%DD")),  # forms.SelectDateWidget,
             'course_work_completed_on': DateInput(format=("%YYYY-%MM-%DD")),  # forms.SelectDateWidget,
         }
-
-# class OccupyingForm(forms.ModelForm):
-#     """Form Definition for Occupying"""
-#     def __init__(self, *args, **kwargs):
-#         super(OccupyingForm, self).__init__(*args, **kwargs)
-#
-#     class Meta:
-#         model = Applicant
-#         exclude = '__all__'
-#         fields = (
-#             'occupied_Type1',
-#             'occupied_Tulsi',
-#             'occupied_MRSB',
-#             'defer_Type1',
-#             'defer_Tulsi',
-#             'defer_MRSB'
-#         )
-#         labels = {
-#             "occupied_Type1": "Occupy Type-1",
-#             "occupied_Tulsi": "Occupy Tulsi",
-#             "occupied_MRSB": "Occupy MRSB",
-#             "defer_Tulsi": "Don't want Type-1",
-#             "defer_Type1": "Don't want Tulsi",
-#             "defer_MRSB": "Don't want MRSB"
-#         }
-
 
 class VacatingForm(forms.Form):
     """Form definition for Vacating"""
@@ -96,7 +71,12 @@ class MailingListForm(forms.ModelForm):
         for building in buildings:
             applicants_before = building.applicant.all()
         applicants_after = self.cleaned_data['applicant']
-        applicants_diff = applicants_after.exclude(id__in=applicants_before)
+        if len(applicants_before) > len(applicants_after):
+            raise PermissionDenied()
+        if applicants_before != None:
+            applicants_diff = applicants_after.exclude(id__in=applicants_before)
+        else:
+            applicants_diff = applicants_after
 
         for appli in applicants_diff:
             emailid = appli.email
@@ -128,7 +108,12 @@ class OccupiedListForm(forms.ModelForm):
         for building in buildings:
             applicants_before = building.applicant.all()
         applicants_after = self.cleaned_data['applicant']
-        applicants_diff = applicants_after.exclude(id__in=applicants_before)
+        if len(applicants_before) > len(applicants_after):
+            raise PermissionDenied()
+        if applicants_before != None:
+            applicants_diff = applicants_after.exclude(id__in=applicants_before)
+        else:
+            applicants_diff = applicants_after
 
         for appli in applicants_diff:
             emailid = appli.email
@@ -155,7 +140,12 @@ class VacatedListForm(forms.ModelForm):
         for building in buildings:
             applicants_before = building.applicant.all()
         applicants_after = self.cleaned_data['applicant']
-        applicants_diff = applicants_after.exclude(id__in=applicants_before)
+        if len(applicants_before) > len(applicants_after):
+            raise PermissionDenied()
+        if applicants_before != None:
+            applicants_diff = applicants_after.exclude(id__in=applicants_before)
+        else:
+            applicants_diff = applicants_after
         for appli in applicants_diff:
             emailid = appli.email
             message = f"You have successfully vacated {self.cleaned_data['building']}. Deposit the keys at HCU office."

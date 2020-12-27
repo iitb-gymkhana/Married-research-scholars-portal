@@ -39,17 +39,17 @@ class Applicant(models.Model):
     recommendation_of_guide_for_accomodation_verified = models.BooleanField(default=False, null=False)
     feedback = models.TextField(default='Your Documents are not yet verified!', null=True, blank=True)
     acadsection_feedback = models.TextField(default='', null=True, blank=True, verbose_name="Feedback")
-    waitlist_Type1 = models.IntegerField(default=0, db_index=True, editable=False)
-    waitlist_Tulsi = models.IntegerField(default=0, db_index=True, editable=False)
-    waitlist_MRSB = models.IntegerField(default=0, db_index=True, editable=False)
+    waitlist_Type1 = models.IntegerField(default=-1, db_index=True, editable=False)
+    waitlist_Tulsi = models.IntegerField(default=-1, db_index=True, editable=False)
+    waitlist_MRSB = models.IntegerField(default=-1, db_index=True, editable=False)
     date_applied = models.DateTimeField(null=False, default=timezone.now, editable=False, verbose_name="Date Applied")
     verified_time = models.DateTimeField(null=True, blank=True, verbose_name="Date of verification by HCU")
     occupied_Type1 = models.BooleanField(default=False)
     occupied_Tulsi = models.BooleanField(default=False)
     occupied_MRSB = models.BooleanField(default=False)
-    defer_Type1 = models.BooleanField(default=False)
-    defer_Tulsi = models.BooleanField(default=False)
-    defer_MRSB = models.BooleanField(default=False)
+    # defer_Type1 = models.BooleanField(default=False)
+    # defer_Tulsi = models.BooleanField(default=False)
+    # defer_MRSB = models.BooleanField(default=False)
     scholarship_awarded_upto = models.DateField(verbose_name="Initially the scholarship awarded up to", null=True, blank=True)
     acad_details_verified = models.BooleanField(default=False, verbose_name="The academic details are verified and found correct")
     acad_details_verification_date = models.DateTimeField(default=timezone.now, verbose_name="Verification Date by Academic Section", null=True)
@@ -107,9 +107,12 @@ class Applicant(models.Model):
                             #                               joint_photograph_with_spouse_verified=True,
                             #                               coursework_grade_sheet_verified=True,
                             #                               recommendation_of_guide_for_accomodation_verified=True).order_by('date_applied')
-                            self.waitlist_Type1 = 1 + len(qs.filter(waitlist_Type1__gt=0, occupied_Type1=False))
-                            self.waitlist_Tulsi = 1 + len(qs.filter(waitlist_Tulsi__gt=0, occupied_Tulsi=False))
-                            self.waitlist_MRSB = 1 + len(qs.filter(waitlist_MRSB__gt=0, occupied_MRSB=False))
+                            if self.waitlist_Type1 == -1:
+                                self.waitlist_Type1 = 1 + len(qs.filter(waitlist_Type1__gt=0, occupied_Type1=False))
+                            if self.waitlist_Tulsi == -1:
+                                self.waitlist_Tulsi = 1 + len(qs.filter(waitlist_Tulsi__gt=0, occupied_Tulsi=False))
+                            if self.waitlist_MRSB == -1:
+                                self.waitlist_MRSB = 1 + len(qs.filter(waitlist_MRSB__gt=0, occupied_MRSB=False))
                         else:
                             """If the applicant has vacated"""
                             if not self.occupied_Tulsi:
@@ -235,20 +238,14 @@ class Waitlist(models.Model):
     applicant = models.ManyToManyField(Applicant, blank=True)
 
     class Meta:
-        verbose_name = "Offered"
-        verbose_name_plural = "Offered"
+        verbose_name = "Buffered"
+        verbose_name_plural = "Buffered"
 
     def __str__(self):
         return self.building
 
     def save(self, *args, **kwargs):
         super(Waitlist, self).save(*args, **kwargs)
-        # send_mail(
-        #     subject='Subject',
-        #     message="Message",
-        #     from_email='180070032@iitb.ac.in',
-        #     recipient_list=['180070032@iitb.ac.in', ],
-        # )
 
 class OccupiedList(models.Model):
     building = models.CharField(max_length=125, unique=True)

@@ -118,13 +118,12 @@ def vacate(request):
     applicants = Applicant.objects.filter(roll_number=request.user.username)
     is_visible = False
     for applicant in applicants:
-        # is_visible = applicant.occupied_MRSB or applicant.occupied_Type1 or applicant.occupied_Tulsi
         is_visible = applicant.occupied_any()
     if request.method == 'POST':
         POST = request.POST
         form = VacatingForm(POST, request.FILES)
         if form.is_valid():
-            # for person in Applicant.objects.filter():
+
             applicants = Applicant.objects.filter(roll_number=request.user.username)
             for applicant in applicants:
                 if form.cleaned_data['vacate']:
