@@ -35,7 +35,7 @@ cloudpickle @ file:///home/conda/feedstock_root/build_artifacts/cloudpickle_1598
 clyent==1.2.1
 colorama==0.4.3
 contextlib2==0.6.0.post1
-cryptography==2.9.2
+cryptography==3.2
 cycler==0.10.0
 cytoolz==0.10.1
 dask @ file:///home/conda/feedstock_root/build_artifacts/dask-core_1607657054678/work
