@@ -75,8 +75,8 @@ class Applicant(models.Model):
     def occupied_any(self):
         return self.occupied_Type1 or self.occupied_Tulsi or self.occupied_MRSB
     
-    def deferred_any(self):
-        return self.defer_Type1 or self.defer_Tulsi or self.defer_MRSB
+    # def deferred_any(self):
+    #     return self.defer_Type1 or self.defer_Tulsi or self.defer_MRSB
 
     def save(self, flag=True, *args, **kwargs):
         """
@@ -99,7 +99,7 @@ class Applicant(models.Model):
                                                         joint_photograph_with_spouse_verified=True,
                                                         coursework_grade_sheet_verified=True,
                                                         recommendation_of_guide_for_accomodation_verified=True).order_by('verified_time')
-                    if not self.occupied_any() and not self.deferred_any():
+                    if not self.occupied_any():
                         """Either entering into waitlist ot vacating the accomodation"""
                         if flag:
                             """Enter into waitlist"""

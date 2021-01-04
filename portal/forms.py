@@ -99,7 +99,7 @@ class OccupiedListForm(forms.ModelForm):
     applicant = forms.ModelMultipleChoiceField(Applicant.objects.filter(acad_details_verified=True, marriage_certificate_verified=True,
                                                         joint_photograph_with_spouse_verified=True,
                                                         coursework_grade_sheet_verified=True,
-                                                        recommendation_of_guide_for_accomodation_verified=True),
+                                                        recommendation_of_guide_for_accomodation_verified=True, waitlist__id__isnull=False),
                                                widget = widgets.FilteredSelectMultiple('Applicant', False, attrs={'rows': '2'}), required=False)
 
     def save(self, commit=True):

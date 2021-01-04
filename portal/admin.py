@@ -245,7 +245,7 @@ class WaitlistAdmin(admin.ModelAdmin):
             kwargs['queryset'] = Applicant.objects.filter(acad_details_verified=True, marriage_certificate_verified=True,
                                                         joint_photograph_with_spouse_verified=True,
                                                         coursework_grade_sheet_verified=True,
-                                                        recommendation_of_guide_for_accomodation_verified=True)
+                                                        recommendation_of_guide_for_accomodation_verified=True, waitlist__id__isnull=True)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def view_applicants_link(self, obj):
@@ -278,7 +278,7 @@ class OccupiedListAdmin(admin.ModelAdmin):
             kwargs['queryset'] = Applicant.objects.filter(acad_details_verified=True, marriage_certificate_verified=True,
                                                         joint_photograph_with_spouse_verified=True,
                                                         coursework_grade_sheet_verified=True,
-                                                        recommendation_of_guide_for_accomodation_verified=True, waitlist__id__isnull=True)
+                                                        recommendation_of_guide_for_accomodation_verified=True, waitlist__id__isnull=False, occupiedlist__id__isnull=True)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def view_applicants_link(self, obj):
@@ -308,7 +308,7 @@ class VacatedListAdmin(admin.ModelAdmin):
     form = VacatedListForm
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "applicant":
-            kwargs['queryset'] = Applicant.objects.filter(Q(occupied_Type1=True) | Q(occupied_Tulsi=True) | Q(occupied_MRSB=True))
+            kwargs['queryset'] = Applicant.objects.filter(Q(occupied_Type1=True) | Q(occupied_Tulsi=True) | Q(occupied_MRSB=True), occupiedlist__id__isnull=True, vacatedlist__is__isnull=False)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def view_applicants_link(self, obj):
