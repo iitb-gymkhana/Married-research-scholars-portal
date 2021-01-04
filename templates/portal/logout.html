@@ -1,9 +1,10 @@
 {% extends 'index.html' %}
 
 {% block main %}
-<div class="container">
-  <br><br>
-  You have been logged out!
-  <a href="{% url 'oauth:login' %}"> Login again </a>
+<div class="jumbotron my-4 p-3 text-center">
+    <h3>
+        You have been logged out!
+    </h3>
+  <a href="{% url 'oauth:login' %}"> <button class="btn btn-outline-info m-3">Login again</button> </a>
 </div>
 {% endblock %}

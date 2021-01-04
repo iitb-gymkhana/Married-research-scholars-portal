@@ -1,41 +1,45 @@
 {% extends 'index.html' %}
-{% block cssLinks %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
-    integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-{% endblock %}
+
 
 
 {% block main %}
 <div class="container p-3 my-3" style="border: 2px solid black">
     <h3>Status</h3>
     {% if not all_verified %}
-    <strong><b style="color: black">{{ feedback }}</b></strong>
+    <h4><b style="color: black">{{ feedback }}</b></h4>
     <br>
-    <strong><b>{{ status }}</b></strong>
+    <h5><b>{{ status }}</b></h5>
     {% endif %}
     {% if all_verified %}
-    <strong><b style="color: black">Verified!!</b></strong>
+    <h4><b style="color: black">Your application has been verified!!</b></h4>
+        <br>
+    <h5><b>{{ status }}</b></h5>
     {% endif %}
     
 </div>
 <div class="container p-3 my-3">
   {% if all_verified %}
-      Current waitlist number for your applications:
-  <br>
+      <p>Current waitlist number for your applications:</p>
   {% for building, value in waitlist.items %}
-  <strong>{{ building }}</strong> is {{ value }}
-  <br>
+      {% if value == 0 %}
+          <h6>You are currently occupying <strong>{{ building }}</strong></h6>
+      {% endif %}
+      {% if value != 0 %}
+          <p><strong>{{ building }}</strong> is {{ value }}</p>
+      {% endif %}
   {% endfor %}
   {% endif %}
-  <br>
-  {% if not all_verified %}
-      Your waitlist number is N/A, this is because atleast one of your documents is not verified.
+  {% if not all_verified and status != 'You have not filled the application'%}
+      Your waitlist number is N/A, this is because atleast one of your documents has not been verified yet.
   {% endif %}
-  <br>
-  Building is allotted based on the date of application - first come first serve.
-  If your waitlist number is -2, it means you have occupied a building.<br>
-  If your waitlist number is -1, it means you have chosen to not occupy that building.<br>
-  If your waitlist number is 0, it means you have vacated that building.<br>
-  A positive waitlist number has the same meaning as any waitlist number. 
+    {% if not all_verified and status == 'You have not filled the application'%}
+      Fill the application to enter into the waitlist!
+  {% endif %}
+{#  <br>#}
+{#  Building is allotted based on the date of verification by HCU office - first come first serve.#}
+{#  If your waitlist number is -2, it means you have occupied a building.<br>#}
+{#  If your waitlist number is -1, it means you have chosen to not occupy that building.<br>#}
+{#  If your waitlist number is 0, it means you have vacated that building.<br>#}
+{#  A positive waitlist number has the same meaning as any waitlist number. #}
 </div>
 {% endblock %}
